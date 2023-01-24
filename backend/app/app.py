@@ -14,7 +14,8 @@ def create_app(test_config=None):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # import blueprints
+    # import models
+    from app.models.farmer import Farmer
 
     # register blueprints
 

@@ -1,4 +1,4 @@
-from backend import db
+from backend.app import db
 
 class Farmer(db.Model):
     __tablename__ = "farmers"
@@ -7,5 +7,5 @@ class Farmer(db.Model):
     last_name = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
     city = db.Column(db.String(80), nullable=False)
-    zip_code = db.Column(db.Integer(9), nullable=False)
+    zip_code = db.Column(db.Integer(), nullable=False)
     products = db.relationship("Product", back_populates="farmer")
