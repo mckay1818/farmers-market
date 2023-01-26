@@ -14,6 +14,10 @@ def create_app(test_config=None):
 
     # import models for Alembic setup
     from app.models.seller import Seller
+    from app.models.customer import Customer
+    from app.models.product import Product
+    from app.models.order import Order
+    from app.models.order_product import OrderProduct
 
     # setup db
     db.init_app(app)
