@@ -47,6 +47,7 @@ def one_seller(app):
         last_name=SELLER_LAST_NAME,
         email=SELLER_EMAIL,
         address_1=SELLER_ADDRESS_1,
+        city=SELLER_CITY,
         region=SELLER_REGION,
         postal_code=SELLER_POSTAL_CODE
     )

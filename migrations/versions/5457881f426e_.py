@@ -1,8 +1,8 @@
-"""adds Product, Customer, Order, and OrderProduct models after properly registering in app factory fn
+"""empty message
 
-Revision ID: b56962de9cd9
-Revises: b9bc1a37bce3
-Create Date: 2023-01-26 09:10:06.233856
+Revision ID: 5457881f426e
+Revises: 
+Create Date: 2023-01-28 10:25:51.918824
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b56962de9cd9'
-down_revision = 'b9bc1a37bce3'
+revision = '5457881f426e'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -28,6 +28,20 @@ def upgrade():
     sa.Column('region', sa.String(length=80), nullable=False),
     sa.Column('postal_code', sa.Integer(), nullable=False),
     sa.Column('credits', sa.Integer(), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email')
+    )
+    op.create_table('seller',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('store_name', sa.String(length=80), nullable=False),
+    sa.Column('store_description', sa.Text(), nullable=True),
+    sa.Column('first_name', sa.String(length=20), nullable=False),
+    sa.Column('last_name', sa.String(length=20), nullable=False),
+    sa.Column('email', sa.String(length=80), nullable=False),
+    sa.Column('address_1', sa.String(length=80), nullable=False),
+    sa.Column('city', sa.String(length=80), nullable=False),
+    sa.Column('region', sa.String(length=80), nullable=False),
+    sa.Column('postal_code', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -65,5 +79,6 @@ def downgrade():
     op.drop_table('order_product')
     op.drop_table('product')
     op.drop_table('order')
+    op.drop_table('seller')
     op.drop_table('customer')
     # ### end Alembic commands ###
