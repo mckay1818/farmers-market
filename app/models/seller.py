@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 class Seller(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     store_name = db.Column(db.String(80), nullable=False)
+    store_description = db.Column(db.Text)
     first_name = db.Column(db.String(20), nullable=False)
     last_name = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
