@@ -21,6 +21,7 @@ SELLER_POSTAL_CODE = 12534
 def app():
     app = create_app({"TESTING": True})
 
+    # end session to test that changes are persisted in db
     @request_finished.connect_via(app)
     def expire_session(sender, response, **extra):
         db.session.remove()
@@ -29,7 +30,7 @@ def app():
         db.create_all()
         yield app
 
-    # clear db after request
+    # clear db after test
     with app.app_context():
         db.drop_all()
 

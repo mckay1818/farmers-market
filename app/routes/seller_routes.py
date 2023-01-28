@@ -23,7 +23,7 @@ def create_seller():
     db.session.add(new_seller)
     db.session.commit()
 
-    return make_response(f"Seller {new_seller.first_name} {new_seller.last_name}, owner of {new_seller.store_name} successfully created", 201)
+    return make_response(jsonify(f"Seller {new_seller.first_name} {new_seller.last_name}, owner of {new_seller.store_name} successfully created"), 201)
 
 @sellers_bp.route("", methods=["GET"])
 def get_all_sellers():
