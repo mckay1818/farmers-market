@@ -42,3 +42,33 @@ def get_all_sellers():
             "postal_code": seller.postal_code
         })
     return jsonify(sellers_response)
+
+# TODO - generalize this validate by id fn
+def validate_id_and_get_entry(seller_id):
+    try:
+        seller_id = int(seller_id)
+    except:
+        abort(make_response({"message": f"Seller ID {seller_id} invalid"}, 400))
+    
+    seller = Seller.query.get(seller_id)
+    if not seller:
+        abort(make_response({"message": f"Seller ID {seller_id} not found"}, 404))
+    
+    return seller
+    
+    
+
+@sellers_bp.route("/<seller_id>", methods=["GET"])
+def get_one_seller_by_id(seller_id):
+    seller = validate_id_and_get_entry(seller_id)
+    return {
+            "store_name": seller.store_name,
+            "store_description": seller.store_description,
+            "first_name": seller.first_name,
+            "last_name": seller.last_name,
+            "email": seller.email,
+            "address_1": seller.address_1,
+            "city": seller.city,
+            "region": seller.region,
+            "postal_code": seller.postal_code
+        }

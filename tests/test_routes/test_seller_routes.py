@@ -104,6 +104,25 @@ def test_get_one_seller(client, one_seller):
         "postal_code": SELLER_POSTAL_CODE
     }
 
+def test_get_one_seller_invalid_id(client, one_seller):
+    # Act
+    response = client.get("/sellers/blah")
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 400
+    assert "message" in response_body
+    assert "Seller ID blah invalid" in response_body["message"]
+
+def test_get_one_seller_nonexistent_id(client, one_seller):
+    # Act
+    response = client.get("/sellers/5")
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 404
+    assert "message" in response_body
+    assert "Seller ID 5 not found" in response_body["message"]
 
 # UPDATE
 
