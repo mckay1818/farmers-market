@@ -62,8 +62,8 @@ def test_create_seller_must_contain_store_name(client):
     
     # Assert
     assert response.status_code == 400
-    assert "details" in response_body
-    assert "Request body must include store_name" in response_body["details"]
+    assert "message" in response_body
+    assert "Request body must include store_name" in response_body["message"]
     assert Seller.query.all() == []
 
 # READ
@@ -92,7 +92,7 @@ def test_get_one_seller_by_id(client, one_seller):
 
     # Assert
     assert response.status_code == 200
-    assert response_body== {
+    assert response_body == {
         "store_name": SELLER_STORE_NAME,
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,

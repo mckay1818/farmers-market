@@ -4,21 +4,21 @@ from flask import Blueprint, jsonify, abort, make_response, request
 
 sellers_bp = Blueprint("sellers", __name__, url_prefix="/sellers")
 
+# TODO - generalize this validate model fn
+def validate_seller(cls, request_body):
+    try:
+        new_seller = cls.from_dict(request_body)
+    except KeyError as e:
+        # strip one pair of quotes off key
+        key = str(e).strip("\'")
+        abort(make_response(jsonify({"message": f"Request body must include {key}."}), 400))
+    return new_seller
+
+
 @sellers_bp.route("", methods=["POST"])
 def create_seller():
     request_body = request.get_json()
-    # validate seller
-    new_seller = Seller(
-        store_name=request_body["store_name"],
-        store_description=request_body["store_description"],
-        first_name=request_body["first_name"],
-        last_name=request_body["last_name"],
-        email=request_body["email"],
-        address_1=request_body["address_1"],
-        city=request_body["city"],
-        region=request_body["region"],
-        postal_code=request_body["postal_code"]
-        )
+    new_seller = validate_seller(Seller, request_body)
 
     db.session.add(new_seller)
     db.session.commit()

@@ -17,6 +17,23 @@ class Seller(db.Model):
     def __repr__(self):
         return f"Seller {self.first_name} {self.last_name}, email {self.email}"
 
+    # Convenience Initializer/Seconday Constructor
+    @classmethod
+    def from_dict(cls, dict):
+        new_seller = Seller(
+        store_name=dict["store_name"],
+        store_description=dict["store_description"],
+        first_name=dict["first_name"],
+        last_name=dict["last_name"],
+        email=dict["email"],
+        address_1=dict["address_1"],
+        city=dict["city"],
+        region=dict["region"],
+        postal_code=dict["postal_code"]
+        )
+        return new_seller
+
+
     def to_dict(self):
         return {
             "store_name": self.store_name,
