@@ -6,15 +6,15 @@ from app import db
 from app.models.seller import Seller
 from flask.signals import request_finished
 
-SELLER_STORE_NAME = "Green Acres"
-SELLER_STORE_DESCRIPTION = "An apple orchard that specializes in homemade pies, jams, and cider."
-SELLER_FIRST_NAME = "Lila"
-SELLER_LAST_NAME = "Parker"
-SELLER_EMAIL = "lilaparker@fakemail.com"
-SELLER_ADDRESS_1 = "278 Armstrong Rd"
-SELLER_CITY = "Hudson"
-SELLER_REGION = "New York"
-SELLER_POSTAL_CODE = 12534
+SELLER_1_STORE_NAME = "Green Acres"
+SELLER_1_STORE_DESCRIPTION = "An apple orchard that specializes in homemade pies, jams, and cider."
+SELLER_1_FIRST_NAME = "Lila"
+SELLER_1_LAST_NAME = "Parker"
+SELLER_1_EMAIL = "lilaparker@fakemail.com"
+SELLER_1_ADDRESS_1 = "278 Armstrong Rd"
+SELLER_1_CITY = "Hudson"
+SELLER_1_REGION = "New York"
+SELLER_1_POSTAL_CODE = 12534
 
 # setup application instance
 @pytest.fixture
@@ -42,15 +42,31 @@ def client(app):
 @pytest.fixture
 def one_seller(app):
     new_seller = Seller(
-        store_name=SELLER_STORE_NAME,
-        store_description=SELLER_STORE_DESCRIPTION,
-        first_name=SELLER_FIRST_NAME,
-        last_name=SELLER_LAST_NAME,
-        email=SELLER_EMAIL,
-        address_1=SELLER_ADDRESS_1,
-        city=SELLER_CITY,
-        region=SELLER_REGION,
-        postal_code=SELLER_POSTAL_CODE
+        store_name=SELLER_1_STORE_NAME,
+        store_description=SELLER_1_STORE_DESCRIPTION,
+        first_name=SELLER_1_FIRST_NAME,
+        last_name=SELLER_1_LAST_NAME,
+        email=SELLER_1_EMAIL,
+        address_1=SELLER_1_ADDRESS_1,
+        city=SELLER_1_CITY,
+        region=SELLER_1_REGION,
+        postal_code=SELLER_1_POSTAL_CODE
+    )
+    db.session.add(new_seller)
+    db.session.commit()
+
+@pytest.fixture
+def second_seller(app):
+    new_seller = Seller(
+        store_name="Happy Cows",
+        store_description="A dairy farm in West Tennessee.",
+        first_name="Tammy",
+        last_name="Burns",
+        email="tburns@fakemail.com",
+        address_1="134 Parham Rd",
+        city="Martin",
+        region="Tennessee",
+        postal_code=38237
     )
     db.session.add(new_seller)
     db.session.commit()
