@@ -16,3 +16,16 @@ class Seller(db.Model):
 
     def __repr__(self):
         return f"Seller {self.first_name} {self.last_name}, email {self.email}"
+
+    def to_dict(self):
+        return {
+            "store_name": self.store_name,
+            "store_description": self.store_description,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "address_1": self.address_1,
+            "city": self.city,
+            "region": self.region,
+            "postal_code": self.postal_code
+        }

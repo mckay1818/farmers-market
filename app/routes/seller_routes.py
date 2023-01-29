@@ -30,17 +30,7 @@ def get_all_sellers():
     sellers = Seller.query.all()
     sellers_response = []
     for seller in sellers:
-        sellers_response.append({
-            "store_name": seller.store_name,
-            "store_description": seller.store_description,
-            "first_name": seller.first_name,
-            "last_name": seller.last_name,
-            "email": seller.email,
-            "address_1": seller.address_1,
-            "city": seller.city,
-            "region": seller.region,
-            "postal_code": seller.postal_code
-        })
+        sellers_response.append(seller.to_dict())
     return jsonify(sellers_response)
 
 # TODO - generalize this validate by id fn

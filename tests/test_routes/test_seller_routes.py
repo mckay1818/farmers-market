@@ -85,7 +85,7 @@ def test_get_seller(client, one_seller):
     assert response.status_code == 200
     assert response_body[0]["store_name"] == SELLER_STORE_NAME
 
-def test_get_one_seller(client, one_seller):
+def test_get_one_seller_by_id(client, one_seller):
     # Act
     response = client.get("/sellers/1")
     response_body = response.get_json()
