@@ -44,7 +44,8 @@ def test_create_one_seller(client):
     new_seller = Seller.query.get(1)
 
     assert new_seller
-    assert new_seller["store_name"] == SELLER_STORE_NAME
+    # TODO: RETURN NEW SELLER AS JSONIFIED DICT
+    assert new_seller.store_name == SELLER_STORE_NAME
 
 def test_create_seller_must_contain_store_name(client):
     # Act
