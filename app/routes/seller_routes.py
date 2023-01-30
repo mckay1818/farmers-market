@@ -27,7 +27,7 @@ def validate_id_and_get_entry(seller_id):
     
     return seller
 
-
+# CREATE
 @sellers_bp.route("", methods=["POST"])
 def create_seller():
     request_body = request.get_json()
@@ -38,6 +38,7 @@ def create_seller():
 
     return make_response(jsonify(f"Seller {new_seller.first_name} {new_seller.last_name}, owner of {new_seller.store_name} successfully created."), 201)
 
+# READ
 @sellers_bp.route("", methods=["GET"])
 def get_all_sellers():
     sellers = Seller.query.all()
@@ -52,7 +53,7 @@ def get_one_seller_by_id(seller_id):
     seller = validate_id_and_get_entry(seller_id)
     return seller.to_dict()
 
-
+# UPDATE
 @sellers_bp.route("/<seller_id>", methods=["PUT"])
 def update_one_seller(seller_id):
     seller = validate_id_and_get_entry(seller_id)
@@ -74,3 +75,10 @@ def update_one_seller(seller_id):
     db.session.commit()
     return make_response(jsonify(f"Seller {seller.first_name} {seller.last_name}, owner of {seller.store_name} successfully updated."), 200)
     
+# DELETE
+@sellers_bp.route("/<seller_id>", methods=["DELETE"])
+def delete_one_seller(seller_id):
+    seller = validate_id_and_get_entry(seller_id)
+    db.session.delete(seller)
+    db.session.commit()
+    return make_response(jsonify(f"Seller {seller.first_name} {seller.last_name}, owner of {seller.store_name} successfully deleted."), 200)

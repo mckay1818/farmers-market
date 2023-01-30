@@ -190,3 +190,32 @@ def test_update_one_seller_invalid_id(client, one_seller):
 
 
 # DELETE
+def test_delete_one_seller(client, one_seller):
+    # Act
+    response = client.delete("/sellers/1")
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 200
+    assert response_body == f"Seller {SELLER_FIRST_NAME} {SELLER_LAST_NAME}, owner of {SELLER_STORE_NAME} successfully deleted."
+    assert Seller.query.get(1) == None
+
+def test_delete_nonexistent_seller(client, one_seller):
+    # Act
+    response = client.delete("/sellers/5")
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 404
+    assert "message" in response_body
+    assert "Seller ID 5 not found" in response_body["message"]
+
+def test_delete_invalid_seller(client, one_seller):
+    # Act
+    response = client.delete("/sellers/blah")
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 400
+    assert "message" in response_body
+    assert "Seller ID blah invalid" in response_body["message"]
