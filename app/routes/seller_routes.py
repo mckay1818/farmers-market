@@ -1,37 +1,20 @@
 from app import db
+from app.routes.validation_functions import validate_id_and_get_entry, validate_request_and_create_obj
 from app.models.seller import Seller
+from app.models.product import Product
 from flask import Blueprint, jsonify, abort, make_response, request
 
 sellers_bp = Blueprint("sellers", __name__, url_prefix="/sellers")
 
-# TODO - generalize this validate model fn
-def validate_seller(cls, request_body):
-    try:
-        new_seller = cls.from_dict(request_body)
-    except KeyError as e:
-        # strip one pair of quotes off key
-        key = str(e).strip("\'")
-        abort(make_response(jsonify({"message": f"Request body must include {key}."}), 400))
-    return new_seller
-
-# TODO - generalize this validate by id fn
-def validate_id_and_get_entry(seller_id):
-    try:
-        seller_id = int(seller_id)
-    except:
-        abort(make_response({"message": f"Seller ID {seller_id} invalid"}, 400))
-    
-    seller = Seller.query.get(seller_id)
-    if not seller:
-        abort(make_response({"message": f"Seller ID {seller_id} not found"}, 404))
-    
-    return seller
+##################
+# SELLER ROUTES #
+##################
 
 # CREATE
 @sellers_bp.route("", methods=["POST"])
 def create_seller():
     request_body = request.get_json()
-    new_seller = validate_seller(Seller, request_body)
+    new_seller = validate_request_and_create_obj(Seller, request_body)
 
     db.session.add(new_seller)
     db.session.commit()
@@ -82,3 +65,21 @@ def delete_one_seller(seller_id):
     db.session.delete(seller)
     db.session.commit()
     return make_response(jsonify(f"Seller {seller.first_name} {seller.last_name}, owner of {seller.store_name} successfully deleted."), 200)
+
+
+##################
+# NESTED PRODUCT ROUTES #
+##################
+
+# CREATE
+@sellers_bp.route("/<seller_id>/products", methods=["POST"])
+def add_product_to_seller(seller_id):
+    seller = validate_id_and_get_entry(seller_id)
+    request_body = request.get_json()
+    request_body["seller"] = seller
+
+    new_product = validate_request_and_create_obj(Product, request_body)
+
+    db.session.add(new_product)
+    db.session.commit()
+    return make_response(jsonify(f"Product {new_product.name} from {new_product.seller.store_name} successfully created."), 201)

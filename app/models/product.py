@@ -14,3 +14,16 @@ class Product(db.Model):
 
     def __repr__(self):
         return f"Product {self.name} with quantity {self.quantity}"
+
+    # Convenience Initializer/Seconday Constructor
+    @classmethod
+    def from_dict(cls, dict):
+        new_product = Product(
+        name=dict["name"],
+        price=dict["price"],
+        quantity=dict["quantity"],
+        image_file=dict["image_file"],
+        description=dict["description"],
+        seller=dict["seller"]
+        )
+        return new_product

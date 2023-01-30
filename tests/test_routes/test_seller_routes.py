@@ -1,4 +1,5 @@
 from app.models.seller import Seller
+from app.models.product import Product
 
 SELLER_ID = 1
 SELLER_STORE_NAME = "Green Acres"
@@ -21,6 +22,10 @@ SELLER_POSTAL_CODE = 12534
 # assert response_body.city == SELLER_CITY
 # assert response_body.region == SELLER_REGION
 # assert response_body.postal_code == SELLER_POSTAL_CODE
+
+##################
+# SELLER ROUTES #
+##################
 
 # CREATE
 def test_create_one_seller(client):
@@ -219,3 +224,29 @@ def test_delete_invalid_seller(client, one_seller):
     assert response.status_code == 400
     assert "message" in response_body
     assert "Seller ID blah invalid" in response_body["message"]
+
+##################
+# NESTED PRODUCT ROUTES #
+##################
+def test_create_one_product(client, one_seller):
+    # Act
+    response = client.post("/sellers/1/products", json={
+        "name": "Sweet Corn",
+        "price": 3,
+        "quantity": 20,
+        "image_file": None,
+        "description": "Delicious sweet corn!"
+    })
+    response_body = response.get_json()
+    # Assert
+    assert response.status_code == 201
+    assert response_body == f"Product Sweet Corn from {SELLER_STORE_NAME} successfully created."
+
+    new_product = Product.query.get(1)
+
+    assert new_product
+    assert new_product.price == 3
+    assert new_product.quantity == 20
+    assert new_product.image_file == "default.jpg"
+    assert new_product.description == "Delicious sweet corn!"
+    assert new_product.seller.store_name == "Green Acres"
