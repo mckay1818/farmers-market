@@ -76,10 +76,20 @@ def delete_one_seller(seller_id):
 def add_product_to_seller(seller_id):
     seller = validate_id_and_get_entry(seller_id)
     request_body = request.get_json()
-    request_body["seller"] = seller
+    request_body["seller_id"] = seller.id
 
     new_product = validate_request_and_create_obj(Product, request_body)
 
     db.session.add(new_product)
     db.session.commit()
     return make_response(jsonify(f"Product {new_product.name} from {new_product.seller.store_name} successfully created."), 201)
+
+# READ
+@sellers_bp.route("/<seller_id>/products", methods=["GET"])
+def get_all_products_for_one_seller(seller_id):
+    seller = validate_id_and_get_entry(seller_id)
+    products = Product.query.filter_by(seller_id=seller.id)
+    products_response = []
+    for product in products:
+        products_response.append(product.to_dict())
+    return jsonify(products_response)

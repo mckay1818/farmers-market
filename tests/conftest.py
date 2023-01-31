@@ -4,6 +4,7 @@ import pytest
 from app import create_app
 from app import db
 from app.models.seller import Seller
+from app.models.product import Product
 from flask.signals import request_finished
 
 SELLER_1_STORE_NAME = "Green Acres"
@@ -69,4 +70,17 @@ def second_seller(app):
         postal_code=38237
     )
     db.session.add(new_seller)
+    db.session.commit()
+
+@pytest.fixture
+def one_saved_product(app, one_seller):
+    new_product = Product(
+        name="Sweet Corn",
+        price=3,
+        quantity=20,
+        image_file=None,
+        description="Delicious sweet corn!",
+        seller_id=1,
+    )
+    db.session.add(new_product)
     db.session.commit()

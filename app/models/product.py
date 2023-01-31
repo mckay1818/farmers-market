@@ -24,6 +24,15 @@ class Product(db.Model):
         quantity=dict["quantity"],
         image_file=dict["image_file"],
         description=dict["description"],
-        seller=dict["seller"]
+        seller_id=dict["seller_id"]
         )
         return new_product
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "price": self.price,
+            "quantity": self.quantity,
+            "image_file": self.image_file,
+            "description": self.description,
+        }

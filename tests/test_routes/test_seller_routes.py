@@ -81,7 +81,7 @@ def test_get_sellers_none_saved(client):
     assert response.status_code == 200
     assert response_body == []
 
-def test_get_seller(client, one_seller):
+def test_get_sellers(client, one_seller):
     # Act
     response = client.get("/sellers")
     response_body = response.get_json()
@@ -228,6 +228,8 @@ def test_delete_invalid_seller(client, one_seller):
 ##################
 # NESTED PRODUCT ROUTES #
 ##################
+
+# CREATE
 def test_create_one_product(client, one_seller):
     # Act
     response = client.post("/sellers/1/products", json={
@@ -250,3 +252,36 @@ def test_create_one_product(client, one_seller):
     assert new_product.image_file == "default.jpg"
     assert new_product.description == "Delicious sweet corn!"
     assert new_product.seller.store_name == "Green Acres"
+
+def test_create_one_product_must_contain_name(client, one_seller):
+    # Act
+    response = client.post("/sellers/1/products", json={
+        "price": 3,
+        "quantity": 20,
+        "image_file": None,
+        "description": "Delicious sweet corn!"
+    })
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 400
+    assert "message" in response_body
+    assert "Request body must include name" in response_body["message"]
+    assert Product.query.all() == []
+
+# READ
+def test_get_all_products_from_one_seller(client, one_saved_product):
+    # Act
+    response = client.get("/sellers/1/products")
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 200
+    assert response_body[0]["name"] == "Sweet Corn"
+
+
+# UPDATE
+
+
+
+# DELETE 
