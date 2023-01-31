@@ -101,6 +101,26 @@ def get_all_products_for_one_seller(seller_id):
 def update_one_product_for_one_seller(seller_id, product_id):
     seller = validate_id_and_get_entry(Seller, seller_id)
     product = validate_id_and_get_entry(Product, product_id)
+    request_body = request.get_json()
+    try:
+        product.name = request_body["name"]
+        product.price = request_body["price"]
+        product.quantity = request_body["quantity"]
+        product.image_file = request_body["image_file"]
+        product.description = request_body["description"]
+    except KeyError as e:
+        key = str(e).strip("\'")
+        abort(make_response(jsonify({"message": f"Request body must include {key}."}), 400))
 
+    db.session.commit()
+    return make_response(jsonify(f"Product {product.name} from {product.seller.store_name} successfully updated."), 200)
+    
 
 # DELETE
+@sellers_bp.route("/<seller_id>/products/<product_id>", methods=["DELETE"])
+def delete_one_product_for_one_seller(seller_id, product_id):
+    seller = validate_id_and_get_entry(Seller, seller_id)
+    product = validate_id_and_get_entry(Product, product_id)
+    db.session.delete(product)
+    db.session.commit()
+    return make_response(jsonify(f"Product {product.name} from {product.seller.store_name} successfully deleted."), 200)
