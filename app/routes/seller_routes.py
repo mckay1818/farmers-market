@@ -33,13 +33,13 @@ def get_all_sellers():
     
 @sellers_bp.route("/<seller_id>", methods=["GET"])
 def get_one_seller_by_id(seller_id):
-    seller = validate_id_and_get_entry(seller_id)
+    seller = validate_id_and_get_entry(Seller, seller_id)
     return seller.to_dict()
 
 # UPDATE
 @sellers_bp.route("/<seller_id>", methods=["PUT"])
 def update_one_seller(seller_id):
-    seller = validate_id_and_get_entry(seller_id)
+    seller = validate_id_and_get_entry(Seller, seller_id)
     request_body = request.get_json()
     try:
         seller.store_name = request_body["store_name"]
@@ -61,7 +61,7 @@ def update_one_seller(seller_id):
 # DELETE
 @sellers_bp.route("/<seller_id>", methods=["DELETE"])
 def delete_one_seller(seller_id):
-    seller = validate_id_and_get_entry(seller_id)
+    seller = validate_id_and_get_entry(Seller, seller_id)
     db.session.delete(seller)
     db.session.commit()
     return make_response(jsonify(f"Seller {seller.first_name} {seller.last_name}, owner of {seller.store_name} successfully deleted."), 200)
@@ -74,7 +74,7 @@ def delete_one_seller(seller_id):
 # CREATE
 @sellers_bp.route("/<seller_id>/products", methods=["POST"])
 def add_product_to_seller(seller_id):
-    seller = validate_id_and_get_entry(seller_id)
+    seller = validate_id_and_get_entry(Seller, seller_id)
     request_body = request.get_json()
     request_body["seller_id"] = seller.id
 
@@ -87,9 +87,20 @@ def add_product_to_seller(seller_id):
 # READ
 @sellers_bp.route("/<seller_id>/products", methods=["GET"])
 def get_all_products_for_one_seller(seller_id):
-    seller = validate_id_and_get_entry(seller_id)
+    seller = validate_id_and_get_entry(Seller, seller_id)
     products = Product.query.filter_by(seller_id=seller.id)
     products_response = []
     for product in products:
         products_response.append(product.to_dict())
     return jsonify(products_response)
+
+# TODO - add route for reading 1 product by id
+
+# UPDATE
+@sellers_bp.route("/<seller_id>/products/<product_id>", methods=["PUT"])
+def update_one_product_for_one_seller(seller_id, product_id):
+    seller = validate_id_and_get_entry(Seller, seller_id)
+    product = validate_id_and_get_entry(Product, product_id)
+
+
+# DELETE

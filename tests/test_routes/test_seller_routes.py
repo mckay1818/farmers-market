@@ -117,7 +117,7 @@ def test_get_one_seller_invalid_id(client, one_seller):
     # Assert
     assert response.status_code == 400
     assert "message" in response_body
-    assert "Seller ID blah invalid" in response_body["message"]
+    assert "Seller blah invalid" in response_body["message"]
 
 def test_get_one_seller_nonexistent_id(client, one_seller):
     # Act
@@ -127,7 +127,7 @@ def test_get_one_seller_nonexistent_id(client, one_seller):
     # Assert
     assert response.status_code == 404
     assert "message" in response_body
-    assert "Seller ID 5 not found" in response_body["message"]
+    assert "Seller 5 not found" in response_body["message"]
 
 # UPDATE
 def test_update_one_seller(client, one_seller):
@@ -171,7 +171,7 @@ def test_update_one_seller_nonexistent_id(client, one_seller):
     # Assert
     assert response.status_code == 404
     assert "message" in response_body
-    assert "Seller ID 5 not found" in response_body["message"]
+    assert "Seller 5 not found" in response_body["message"]
 
 def test_update_one_seller_invalid_id(client, one_seller):
     # Act
@@ -191,7 +191,7 @@ def test_update_one_seller_invalid_id(client, one_seller):
     # Assert
     assert response.status_code == 400
     assert "message" in response_body
-    assert "Seller ID blah invalid" in response_body["message"]
+    assert "Seller blah invalid" in response_body["message"]
 
 
 # DELETE
@@ -213,7 +213,7 @@ def test_delete_nonexistent_seller(client, one_seller):
     # Assert
     assert response.status_code == 404
     assert "message" in response_body
-    assert "Seller ID 5 not found" in response_body["message"]
+    assert "Seller 5 not found" in response_body["message"]
 
 def test_delete_invalid_seller(client, one_seller):
     # Act
@@ -223,7 +223,7 @@ def test_delete_invalid_seller(client, one_seller):
     # Assert
     assert response.status_code == 400
     assert "message" in response_body
-    assert "Seller ID blah invalid" in response_body["message"]
+    assert "Seller blah invalid" in response_body["message"]
 
 ##################
 # NESTED PRODUCT ROUTES #
@@ -281,7 +281,32 @@ def test_get_all_products_from_one_seller(client, one_saved_product):
 
 
 # UPDATE
+def test_update_one_product(client, one_saved_product):
+    # Act
+    response = client.put("/sellers/1/products/1", json={
+        "name": "Sweet Corn",
+        "price": 5,
+        "quantity": 20,
+        "image_file": None,
+        "description": "Delicious sweet corn!"
+    })
+    response_body = response.get_json()
+    # Assert
+    assert response.status_code == 200
+    assert response_body == f"Product Sweet Corn from {SELLER_STORE_NAME} successfully updated."
 
+    product = Product.query.get(1)
 
+    assert product
+    assert product.price == 5
 
 # DELETE 
+def test_delete_one_product(client, one_saved_product):
+    # Act
+    response = client.delete("/sellers/1/products/1")
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 200
+    assert response_body == f"Product Sweet Corn from {SELLER_STORE_NAME} successfully deleted."
+    assert Product.query.get(1) == None

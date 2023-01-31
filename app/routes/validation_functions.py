@@ -12,15 +12,15 @@ def validate_request_and_create_obj(cls, request_body):
         abort(make_response(jsonify({"message": f"Request body must include {key}."}), 400))
     return new_obj
 
-# TODO - generalize this validate by id fn
-def validate_id_and_get_entry(seller_id):
+
+def validate_id_and_get_entry(cls, obj_id):
     try:
-        seller_id = int(seller_id)
+        obj_id = int(obj_id)
     except:
-        abort(make_response({"message": f"Seller ID {seller_id} invalid"}, 400))
+        abort(make_response({"message": f"{cls.__name__} {obj_id} invalid"}, 400))
     
-    seller = Seller.query.get(seller_id)
-    if not seller:
-        abort(make_response({"message": f"Seller ID {seller_id} not found"}, 404))
+    obj = cls.query.get(obj_id)
+    if not obj:
+        abort(make_response({"message": f"{cls.__name__} {obj_id} not found"}, 404))
     
-    return seller
+    return obj
