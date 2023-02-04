@@ -90,9 +90,48 @@ def test_get_sellers(client, one_seller):
     assert response.status_code == 200
     assert response_body[0]["store_name"] == SELLER_STORE_NAME
 
-def test_get_one_seller_by_id(client, one_seller):
+# def test_get_one_seller_by_id(client, one_seller):
+#     # Act
+#     response = client.get("/sellers/1")
+#     response_body = response.get_json()
+
+#     # Assert
+#     assert response.status_code == 200
+#     assert response_body == {
+#         "store_name": SELLER_STORE_NAME,
+#         "store_description": SELLER_STORE_DESCRIPTION,
+#         "first_name": SELLER_FIRST_NAME,
+#         "last_name": SELLER_LAST_NAME,
+#         "email": SELLER_EMAIL,
+#         "address_1": SELLER_ADDRESS_1,
+#         "city": SELLER_CITY,
+#         "region": SELLER_REGION,
+#         "postal_code": SELLER_POSTAL_CODE
+#     }
+
+# def test_get_one_seller_invalid_id(client, one_seller):
+#     # Act
+#     response = client.get("/sellers/blah")
+#     response_body = response.get_json()
+
+#     # Assert
+#     assert response.status_code == 400
+#     assert "message" in response_body
+#     assert "Seller blah invalid" in response_body["message"]
+
+# def test_get_one_seller_nonexistent_id(client, one_seller):
+#     # Act
+#     response = client.get("/sellers/5")
+#     response_body = response.get_json()
+
+#     # Assert
+#     assert response.status_code == 404
+#     assert "message" in response_body
+#     assert "Seller 5 not found" in response_body["message"]
+
+def test_get_one_seller_by_store_name(client, one_seller):
     # Act
-    response = client.get("/sellers/1")
+    response = client.get("/sellers/Green_Acres")
     response_body = response.get_json()
 
     # Assert
@@ -109,25 +148,15 @@ def test_get_one_seller_by_id(client, one_seller):
         "postal_code": SELLER_POSTAL_CODE
     }
 
-def test_get_one_seller_invalid_id(client, one_seller):
+def test_get_one_seller_nonexistent_store_name(client, one_seller):
     # Act
-    response = client.get("/sellers/blah")
-    response_body = response.get_json()
-
-    # Assert
-    assert response.status_code == 400
-    assert "message" in response_body
-    assert "Seller blah invalid" in response_body["message"]
-
-def test_get_one_seller_nonexistent_id(client, one_seller):
-    # Act
-    response = client.get("/sellers/5")
+    response = client.get("/sellers/Fake_Store")
     response_body = response.get_json()
 
     # Assert
     assert response.status_code == 404
     assert "message" in response_body
-    assert "Seller 5 not found" in response_body["message"]
+    assert "Seller Fake Store not found" in response_body["message"]
 
 # UPDATE
 def test_update_one_seller(client, one_seller):

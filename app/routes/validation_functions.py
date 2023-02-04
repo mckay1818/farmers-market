@@ -25,9 +25,3 @@ def validate_id_and_get_entry(cls, obj_id):
     
     return obj
 
-def validate_str_and_get_entry(cls, str):
-    obj = cls.query.filter(f"{cls.str} == {str}").first()
-    if not obj:
-        abort(make_response({"message": f"{cls.__name__} not found"}, 404))
-    
-    return obj

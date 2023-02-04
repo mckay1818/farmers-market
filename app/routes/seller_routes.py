@@ -31,9 +31,17 @@ def get_all_sellers():
     return jsonify(sellers_response)
 
     
-@sellers_bp.route("/<seller_id>", methods=["GET"])
-def get_one_seller_by_id(seller_id):
-    seller = validate_id_and_get_entry(Seller, seller_id)
+# @sellers_bp.route("/<seller_id>", methods=["GET"])
+# def get_one_seller_by_id(seller_id):
+#     seller = Seller.validate_id_and_get_entry(seller_id)
+#     return seller.to_dict()
+
+@sellers_bp.route("/<store_name>", methods=["GET"])
+def get_one_seller_by_id(store_name):
+    store_name = store_name.strip().replace("_", " ")
+    seller = Seller.validate_by_store_name_and_get_entry(store_name)
+    if not seller:
+        abort(make_response({"message": f"Seller {store_name} not found"}, 404))
     return seller.to_dict()
 
 # UPDATE

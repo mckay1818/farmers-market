@@ -33,6 +33,13 @@ class Seller(db.Model):
         )
         return new_seller
 
+    @classmethod
+    def validate_by_store_name_and_get_entry(cls, store_name):
+        obj = cls.query.filter_by(store_name=store_name).first()
+        if not obj:
+            return None
+        return obj
+
 
     def to_dict(self):
         return {
