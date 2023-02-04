@@ -24,4 +24,3 @@ def validate_id_and_get_entry(cls, obj_id):
         abort(make_response({"message": f"{cls.__name__} {obj_id} not found"}, 404))
     
     return obj
-

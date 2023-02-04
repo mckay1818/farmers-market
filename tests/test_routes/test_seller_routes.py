@@ -12,17 +12,6 @@ SELLER_CITY = "Hudson"
 SELLER_REGION = "New York"
 SELLER_POSTAL_CODE = 12534
 
-# assert response_body.id == 1
-# assert response_body.store_name == SELLER_STORE_NAME
-# assert response_body.store_description == SELLER_STORE_DESCRIPTION
-# assert response_body.first_name == SELLER_FIRST_NAME
-# assert response_body.last_name == SELLER_LAST_NAME
-# assert response_body.email == SELLER_EMAIL
-# assert response_body.address_1 == SELLER_ADDRESS_1
-# assert response_body.city == SELLER_CITY
-# assert response_body.region == SELLER_REGION
-# assert response_body.postal_code == SELLER_POSTAL_CODE
-
 ##################
 # SELLER ROUTES #
 ##################
@@ -90,45 +79,6 @@ def test_get_sellers(client, one_seller):
     assert response.status_code == 200
     assert response_body[0]["store_name"] == SELLER_STORE_NAME
 
-# def test_get_one_seller_by_id(client, one_seller):
-#     # Act
-#     response = client.get("/sellers/1")
-#     response_body = response.get_json()
-
-#     # Assert
-#     assert response.status_code == 200
-#     assert response_body == {
-#         "store_name": SELLER_STORE_NAME,
-#         "store_description": SELLER_STORE_DESCRIPTION,
-#         "first_name": SELLER_FIRST_NAME,
-#         "last_name": SELLER_LAST_NAME,
-#         "email": SELLER_EMAIL,
-#         "address_1": SELLER_ADDRESS_1,
-#         "city": SELLER_CITY,
-#         "region": SELLER_REGION,
-#         "postal_code": SELLER_POSTAL_CODE
-#     }
-
-# def test_get_one_seller_invalid_id(client, one_seller):
-#     # Act
-#     response = client.get("/sellers/blah")
-#     response_body = response.get_json()
-
-#     # Assert
-#     assert response.status_code == 400
-#     assert "message" in response_body
-#     assert "Seller blah invalid" in response_body["message"]
-
-# def test_get_one_seller_nonexistent_id(client, one_seller):
-#     # Act
-#     response = client.get("/sellers/5")
-#     response_body = response.get_json()
-
-#     # Assert
-#     assert response.status_code == 404
-#     assert "message" in response_body
-#     assert "Seller 5 not found" in response_body["message"]
-
 def test_get_one_seller_by_store_name(client, one_seller):
     # Act
     response = client.get("/sellers/Green_Acres")
@@ -161,7 +111,7 @@ def test_get_one_seller_nonexistent_store_name(client, one_seller):
 # UPDATE
 def test_update_one_seller(client, one_seller):
     # Act
-    response = client.put("/sellers/1", json={
+    response = client.put("/sellers/Green_Acres", json={
         "store_name": "A New Store Name",
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,
@@ -182,7 +132,7 @@ def test_update_one_seller(client, one_seller):
     assert new_seller
     assert new_seller.store_name == "A New Store Name"
 
-def test_update_one_seller_nonexistent_id(client, one_seller):
+def test_update_one_seller_nonexistent_store(client, one_seller):
     # Act
     response = client.put("/sellers/5", json={
         "store_name": "A New Store Name",
@@ -202,31 +152,10 @@ def test_update_one_seller_nonexistent_id(client, one_seller):
     assert "message" in response_body
     assert "Seller 5 not found" in response_body["message"]
 
-def test_update_one_seller_invalid_id(client, one_seller):
-    # Act
-    response = client.put("/sellers/blah", json={
-        "store_name": "A New Store Name",
-        "store_description": SELLER_STORE_DESCRIPTION,
-        "first_name": SELLER_FIRST_NAME,
-        "last_name": SELLER_LAST_NAME,
-        "email": SELLER_EMAIL,
-        "address_1": SELLER_ADDRESS_1,
-        "city": SELLER_CITY,
-        "region": SELLER_REGION,
-        "postal_code": SELLER_POSTAL_CODE
-    })
-    response_body = response.get_json()
-
-    # Assert
-    assert response.status_code == 400
-    assert "message" in response_body
-    assert "Seller blah invalid" in response_body["message"]
-
-
 # DELETE
 def test_delete_one_seller(client, one_seller):
     # Act
-    response = client.delete("/sellers/1")
+    response = client.delete("/sellers/Green_Acres")
     response_body = response.get_json()
 
     # Assert
@@ -243,16 +172,6 @@ def test_delete_nonexistent_seller(client, one_seller):
     assert response.status_code == 404
     assert "message" in response_body
     assert "Seller 5 not found" in response_body["message"]
-
-def test_delete_invalid_seller(client, one_seller):
-    # Act
-    response = client.delete("/sellers/blah")
-    response_body = response.get_json()
-
-    # Assert
-    assert response.status_code == 400
-    assert "message" in response_body
-    assert "Seller blah invalid" in response_body["message"]
 
 ##################
 # NESTED PRODUCT ROUTES #
@@ -339,3 +258,73 @@ def test_delete_one_product(client, one_saved_product):
     assert response.status_code == 200
     assert response_body == f"Product Sweet Corn from {SELLER_STORE_NAME} successfully deleted."
     assert Product.query.get(1) == None
+
+
+# def test_get_one_seller_by_id(client, one_seller):
+#     # Act
+#     response = client.get("/sellers/1")
+#     response_body = response.get_json()
+
+#     # Assert
+#     assert response.status_code == 200
+#     assert response_body == {
+#         "store_name": SELLER_STORE_NAME,
+#         "store_description": SELLER_STORE_DESCRIPTION,
+#         "first_name": SELLER_FIRST_NAME,
+#         "last_name": SELLER_LAST_NAME,
+#         "email": SELLER_EMAIL,
+#         "address_1": SELLER_ADDRESS_1,
+#         "city": SELLER_CITY,
+#         "region": SELLER_REGION,
+#         "postal_code": SELLER_POSTAL_CODE
+#     }
+
+# def test_get_one_seller_invalid_id(client, one_seller):
+#     # Act
+#     response = client.get("/sellers/blah")
+#     response_body = response.get_json()
+
+#     # Assert
+#     assert response.status_code == 400
+#     assert "message" in response_body
+#     assert "Seller blah invalid" in response_body["message"]
+
+# def test_get_one_seller_nonexistent_id(client, one_seller):
+#     # Act
+#     response = client.get("/sellers/5")
+#     response_body = response.get_json()
+
+#     # Assert
+#     assert response.status_code == 404
+#     assert "message" in response_body
+#     assert "Seller 5 not found" in response_body["message"]
+
+# def test_update_one_seller_invalid_id(client, one_seller):
+#     # Act
+#     response = client.put("/sellers/blah", json={
+#         "store_name": "A New Store Name",
+#         "store_description": SELLER_STORE_DESCRIPTION,
+#         "first_name": SELLER_FIRST_NAME,
+#         "last_name": SELLER_LAST_NAME,
+#         "email": SELLER_EMAIL,
+#         "address_1": SELLER_ADDRESS_1,
+#         "city": SELLER_CITY,
+#         "region": SELLER_REGION,
+#         "postal_code": SELLER_POSTAL_CODE
+#     })
+#     response_body = response.get_json()
+
+#     # Assert
+#     assert response.status_code == 400
+#     assert "message" in response_body
+#     assert "Seller blah invalid" in response_body["message"]
+
+# def test_delete_invalid_seller(client, one_seller):
+#     # Act
+#     response = client.delete("/sellers/blah")
+#     response_body = response.get_json()
+
+#     # Assert
+#     assert response.status_code == 400
+#     assert "message" in response_body
+#     assert "Seller blah invalid" in response_body["message"]
