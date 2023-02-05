@@ -19,6 +19,7 @@ class Seller(db.Model, UserMixin):
         first_name=dict["first_name"],
         last_name=dict["last_name"],
         email=dict["email"],
+        password=dict["password"],
         address_1=dict["address_1"],
         city=dict["city"],
         region=dict["region"],
