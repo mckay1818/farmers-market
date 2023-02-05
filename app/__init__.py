@@ -4,14 +4,17 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
 from flask_cors import CORS
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 
 db = SQLAlchemy()
 migrate = Migrate()
+jwt = JWTManager()
 load_dotenv()
 
 def create_app(test_config=None):
     app = Flask(__name__)
     app.url_map.strict_slashes = False
+    app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
 
     if not test_config:
         app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -19,7 +22,6 @@ def create_app(test_config=None):
     else:
         app.config["TESTING"] = True
         app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("SQLALCHEMY_TEST_DATABASE_URI")
-
 
     # import models for Alembic setup
     from app.models.seller import Seller
@@ -34,7 +36,10 @@ def create_app(test_config=None):
 
     # import and register blueprints
     from .routes.seller_routes import sellers_bp
+    from .routes.auth import auth_bp
     app.register_blueprint(sellers_bp)
+    app.register_blueprint(auth_bp)
 
+    jwt.init_app(app)
     CORS(app)
     return app
