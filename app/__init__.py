@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
 from flask_cors import CORS
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
+from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
 migrate = Migrate()

@@ -32,7 +32,7 @@ def get_all_sellers():
 
 @sellers_bp.route("/<store_name>", methods=["GET"])
 def get_one_seller_by_id(store_name):
-    store_name = store_name.strip().replace("_", " ")
+    store_name = store_name.strip().replace("-", " ")
     seller = Seller.validate_by_store_name_and_get_entry(store_name)
     if not seller:
         abort(make_response({"message": f"Seller {store_name} not found"}, 404))
@@ -41,7 +41,7 @@ def get_one_seller_by_id(store_name):
 # UPDATE
 @sellers_bp.route("/<store_name>", methods=["PUT"])
 def update_one_seller(store_name):
-    store_name = store_name.strip().replace("_", " ")
+    store_name = store_name.strip().replace("-", " ")
     seller = Seller.validate_by_store_name_and_get_entry(store_name)
     if not seller:
         abort(make_response({"message": f"Seller {store_name} not found"}, 404))
@@ -66,7 +66,7 @@ def update_one_seller(store_name):
 # DELETE
 @sellers_bp.route("/<store_name>", methods=["DELETE"])
 def delete_one_seller(store_name):
-    store_name = store_name.strip().replace("_", " ")
+    store_name = store_name.strip().replace("-", " ")
     seller = Seller.validate_by_store_name_and_get_entry(store_name)
     if not seller:
         abort(make_response({"message": f"Seller {store_name} not found"}, 404))

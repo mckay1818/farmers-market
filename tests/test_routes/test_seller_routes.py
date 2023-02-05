@@ -7,6 +7,7 @@ SELLER_STORE_DESCRIPTION = "An apple orchard that specializes in homemade pies, 
 SELLER_FIRST_NAME = "Lila"
 SELLER_LAST_NAME = "Parker"
 SELLER_EMAIL = "lilaparker@fakemail.com"
+SELLER_PASSWORD = "password"
 SELLER_ADDRESS_1 = "278 Armstrong Rd"
 SELLER_CITY = "Hudson"
 SELLER_REGION = "New York"
@@ -25,6 +26,7 @@ def test_create_one_seller(client):
         "first_name": SELLER_FIRST_NAME,
         "last_name": SELLER_LAST_NAME,
         "email": SELLER_EMAIL,
+        "password": SELLER_PASSWORD,
         "address_1": SELLER_ADDRESS_1,
         "city": SELLER_CITY,
         "region": SELLER_REGION,
@@ -47,6 +49,7 @@ def test_create_seller_must_contain_store_name(client):
         "first_name": SELLER_FIRST_NAME,
         "last_name": SELLER_LAST_NAME,
         "email": SELLER_EMAIL,
+        "password": SELLER_PASSWORD,
         "address_1": SELLER_ADDRESS_1,
         "city": SELLER_CITY,
         "region": SELLER_REGION,
@@ -81,7 +84,7 @@ def test_get_sellers(client, one_seller):
 
 def test_get_one_seller_by_store_name(client, one_seller):
     # Act
-    response = client.get("/sellers/Green_Acres")
+    response = client.get("/sellers/Green-Acres")
     response_body = response.get_json()
 
     # Assert
@@ -100,7 +103,7 @@ def test_get_one_seller_by_store_name(client, one_seller):
 
 def test_get_one_seller_nonexistent_store_name(client, one_seller):
     # Act
-    response = client.get("/sellers/Fake_Store")
+    response = client.get("/sellers/Fake-Store")
     response_body = response.get_json()
 
     # Assert
@@ -111,7 +114,7 @@ def test_get_one_seller_nonexistent_store_name(client, one_seller):
 # UPDATE
 def test_update_one_seller(client, one_seller):
     # Act
-    response = client.put("/sellers/Green_Acres", json={
+    response = client.put("/sellers/Green-Acres", json={
         "store_name": "A New Store Name",
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,
@@ -155,7 +158,7 @@ def test_update_one_seller_nonexistent_store(client, one_seller):
 # DELETE
 def test_delete_one_seller(client, one_seller):
     # Act
-    response = client.delete("/sellers/Green_Acres")
+    response = client.delete("/sellers/Green-Acres")
     response_body = response.get_json()
 
     # Assert
