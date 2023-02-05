@@ -1,16 +1,9 @@
 from app import db
 from sqlalchemy.orm import relationship
+from .usermixin import UserMixin
 
-class Customer(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    first_name = db.Column(db.String(20), nullable=False)
-    last_name = db.Column(db.String(20), nullable=False)
+class Customer(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(80), unique=True, nullable=False)
-    address_1 = db.Column(db.String(80), nullable=False)
-    city = db.Column(db.String(80), nullable=False)
-    region = db.Column(db.String(80), nullable=False)
-    postal_code = db.Column(db.Integer, nullable=False)
     credits = db.Column(db.Integer, default=5000)
     orders = db.relationship('Order', back_populates='customer', lazy=True)
 
