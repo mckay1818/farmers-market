@@ -22,6 +22,6 @@ def seller_signup():
 def customer_signup():
     pass
 
-@auth.route("/logout")
+@auth_bp.route("/logout")
 def logout():
     return "Logout"
