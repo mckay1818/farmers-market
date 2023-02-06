@@ -10,17 +10,6 @@ sellers_bp = Blueprint("sellers", __name__, url_prefix="/sellers")
 # SELLER ROUTES #
 ##################
 
-# CREATE
-@sellers_bp.route("", methods=["POST"])
-def create_seller():
-    request_body = request.get_json()
-    new_seller = validate_request_and_create_obj(Seller, request_body)
-
-    db.session.add(new_seller)
-    db.session.commit()
-
-    return make_response(jsonify(f"Seller {new_seller.first_name} {new_seller.last_name}, owner of {new_seller.store_name} successfully created."), 201)
-
 # READ
 @sellers_bp.route("", methods=["GET"])
 def get_all_sellers():

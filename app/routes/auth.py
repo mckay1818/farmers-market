@@ -71,9 +71,15 @@ def protected():
         username=current_user.store_name,
     )
 
-@sellers_bp.route("/signup")
+@sellers_bp.route("/signup", methods=["POST"])
 def seller_signup():
-    pass
+    request_body = request.get_json()
+    new_seller = validate_request_and_create_obj(Seller, request_body)
+
+    db.session.add(new_seller)
+    db.session.commit()
+
+    return make_response(jsonify(f"Seller {new_seller.first_name} {new_seller.last_name}, owner of {new_seller.store_name} successfully created."), 201)
 
 @auth_bp.route("/customer-signup")
 def customer_signup():

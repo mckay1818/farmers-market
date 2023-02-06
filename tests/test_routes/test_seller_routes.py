@@ -20,7 +20,7 @@ SELLER_POSTAL_CODE = 12534
 # CREATE
 def test_create_one_seller(client):
     # Act
-    response = client.post("/sellers", json={
+    response = client.post("/sellers/signup", json={
         "store_name": SELLER_STORE_NAME,
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,
@@ -44,7 +44,7 @@ def test_create_one_seller(client):
 
 def test_create_seller_must_contain_store_name(client):
     # Act
-    response = client.post("/sellers", json={
+    response = client.post("/sellers/signup", json={
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,
         "last_name": SELLER_LAST_NAME,
@@ -90,6 +90,7 @@ def test_get_one_seller_by_store_name(client, one_seller):
     # Assert
     assert response.status_code == 200
     assert response_body == {
+        "id": SELLER_ID,
         "store_name": SELLER_STORE_NAME,
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,

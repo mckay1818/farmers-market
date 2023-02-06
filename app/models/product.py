@@ -12,9 +12,6 @@ class Product(db.Model):
     seller = db.relationship('Seller', back_populates='products')
     orders = db.relationship('Order', secondary='order_product', back_populates='products')
 
-    def __repr__(self):
-        return f"Product {self.name} with quantity {self.quantity}"
-
     # Convenience Initializer/Seconday Constructor
     @classmethod
     def from_dict(cls, dict):
