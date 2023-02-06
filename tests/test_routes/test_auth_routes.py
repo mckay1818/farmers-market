@@ -69,3 +69,48 @@ def test_login_incorrect_password(client, one_seller):
     assert "message" in response_body
     assert "Incorrect password" in response_body["message"]
 
+# CREATE ONE SELLER
+def test_create_one_seller(client):
+    # Act
+    response = client.post("/sellers/signup", json={
+        "store_name": SELLER_STORE_NAME,
+        "store_description": SELLER_STORE_DESCRIPTION,
+        "first_name": SELLER_FIRST_NAME,
+        "last_name": SELLER_LAST_NAME,
+        "email": SELLER_EMAIL,
+        "password": SELLER_PASSWORD,
+        "address_1": SELLER_ADDRESS_1,
+        "city": SELLER_CITY,
+        "region": SELLER_REGION,
+        "postal_code": SELLER_POSTAL_CODE
+    })
+    response_body = response.get_json()
+    # Assert
+    assert response.status_code == 201
+    assert response_body == f"Seller {SELLER_FIRST_NAME} {SELLER_LAST_NAME}, owner of {SELLER_STORE_NAME} successfully created."
+
+    new_seller = Seller.query.get(1)
+
+    assert new_seller
+    assert new_seller.store_name == SELLER_STORE_NAME
+
+def test_create_seller_must_contain_store_name(client):
+    # Act
+    response = client.post("/sellers/signup", json={
+        "store_description": SELLER_STORE_DESCRIPTION,
+        "first_name": SELLER_FIRST_NAME,
+        "last_name": SELLER_LAST_NAME,
+        "email": SELLER_EMAIL,
+        "password": SELLER_PASSWORD,
+        "address_1": SELLER_ADDRESS_1,
+        "city": SELLER_CITY,
+        "region": SELLER_REGION,
+        "postal_code": SELLER_POSTAL_CODE
+    })
+    response_body = response.get_json()
+    
+    # Assert
+    assert response.status_code == 400
+    assert "message" in response_body
+    assert "Request body must include store_name" in response_body["message"]
+    assert Seller.query.all() == []

@@ -17,52 +17,6 @@ SELLER_POSTAL_CODE = 12534
 # SELLER ROUTES #
 ##################
 
-# CREATE
-def test_create_one_seller(client):
-    # Act
-    response = client.post("/sellers/signup", json={
-        "store_name": SELLER_STORE_NAME,
-        "store_description": SELLER_STORE_DESCRIPTION,
-        "first_name": SELLER_FIRST_NAME,
-        "last_name": SELLER_LAST_NAME,
-        "email": SELLER_EMAIL,
-        "password": SELLER_PASSWORD,
-        "address_1": SELLER_ADDRESS_1,
-        "city": SELLER_CITY,
-        "region": SELLER_REGION,
-        "postal_code": SELLER_POSTAL_CODE
-    })
-    response_body = response.get_json()
-    # Assert
-    assert response.status_code == 201
-    assert response_body == f"Seller {SELLER_FIRST_NAME} {SELLER_LAST_NAME}, owner of {SELLER_STORE_NAME} successfully created."
-
-    new_seller = Seller.query.get(1)
-
-    assert new_seller
-    assert new_seller.store_name == SELLER_STORE_NAME
-
-def test_create_seller_must_contain_store_name(client):
-    # Act
-    response = client.post("/sellers/signup", json={
-        "store_description": SELLER_STORE_DESCRIPTION,
-        "first_name": SELLER_FIRST_NAME,
-        "last_name": SELLER_LAST_NAME,
-        "email": SELLER_EMAIL,
-        "password": SELLER_PASSWORD,
-        "address_1": SELLER_ADDRESS_1,
-        "city": SELLER_CITY,
-        "region": SELLER_REGION,
-        "postal_code": SELLER_POSTAL_CODE
-    })
-    response_body = response.get_json()
-    
-    # Assert
-    assert response.status_code == 400
-    assert "message" in response_body
-    assert "Request body must include store_name" in response_body["message"]
-    assert Seller.query.all() == []
-
 # READ
 def test_get_sellers_none_saved(client):
     # Act
@@ -184,7 +138,7 @@ def test_delete_nonexistent_seller(client, one_seller):
 # CREATE
 def test_create_one_product(client, one_seller):
     # Act
-    response = client.post("/sellers/1/products", json={
+    response = client.post("/sellers/Green-Acres/products", json={
         "name": "Sweet Corn",
         "price": 3,
         "quantity": 20,
@@ -207,7 +161,7 @@ def test_create_one_product(client, one_seller):
 
 def test_create_one_product_must_contain_name(client, one_seller):
     # Act
-    response = client.post("/sellers/1/products", json={
+    response = client.post("/sellers/Green-Acres/products", json={
         "price": 3,
         "quantity": 20,
         "image_file": None,
@@ -224,7 +178,7 @@ def test_create_one_product_must_contain_name(client, one_seller):
 # READ
 def test_get_all_products_from_one_seller(client, one_saved_product):
     # Act
-    response = client.get("/sellers/1/products")
+    response = client.get("/sellers/Green-Acres/products")
     response_body = response.get_json()
 
     # Assert
@@ -235,7 +189,7 @@ def test_get_all_products_from_one_seller(client, one_saved_product):
 # UPDATE
 def test_update_one_product(client, one_saved_product):
     # Act
-    response = client.put("/sellers/1/products/1", json={
+    response = client.put("/sellers/Green-Acres/products/1", json={
         "name": "Sweet Corn",
         "price": 5,
         "quantity": 20,
@@ -255,80 +209,10 @@ def test_update_one_product(client, one_saved_product):
 # DELETE 
 def test_delete_one_product(client, one_saved_product):
     # Act
-    response = client.delete("/sellers/1/products/1")
+    response = client.delete("/sellers/Green-Acres/products/1")
     response_body = response.get_json()
 
     # Assert
     assert response.status_code == 200
     assert response_body == f"Product Sweet Corn from {SELLER_STORE_NAME} successfully deleted."
     assert Product.query.get(1) == None
-
-
-# def test_get_one_seller_by_id(client, one_seller):
-#     # Act
-#     response = client.get("/sellers/1")
-#     response_body = response.get_json()
-
-#     # Assert
-#     assert response.status_code == 200
-#     assert response_body == {
-#         "store_name": SELLER_STORE_NAME,
-#         "store_description": SELLER_STORE_DESCRIPTION,
-#         "first_name": SELLER_FIRST_NAME,
-#         "last_name": SELLER_LAST_NAME,
-#         "email": SELLER_EMAIL,
-#         "address_1": SELLER_ADDRESS_1,
-#         "city": SELLER_CITY,
-#         "region": SELLER_REGION,
-#         "postal_code": SELLER_POSTAL_CODE
-#     }
-
-# def test_get_one_seller_invalid_id(client, one_seller):
-#     # Act
-#     response = client.get("/sellers/blah")
-#     response_body = response.get_json()
-
-#     # Assert
-#     assert response.status_code == 400
-#     assert "message" in response_body
-#     assert "Seller blah invalid" in response_body["message"]
-
-# def test_get_one_seller_nonexistent_id(client, one_seller):
-#     # Act
-#     response = client.get("/sellers/5")
-#     response_body = response.get_json()
-
-#     # Assert
-#     assert response.status_code == 404
-#     assert "message" in response_body
-#     assert "Seller 5 not found" in response_body["message"]
-
-# def test_update_one_seller_invalid_id(client, one_seller):
-#     # Act
-#     response = client.put("/sellers/blah", json={
-#         "store_name": "A New Store Name",
-#         "store_description": SELLER_STORE_DESCRIPTION,
-#         "first_name": SELLER_FIRST_NAME,
-#         "last_name": SELLER_LAST_NAME,
-#         "email": SELLER_EMAIL,
-#         "address_1": SELLER_ADDRESS_1,
-#         "city": SELLER_CITY,
-#         "region": SELLER_REGION,
-#         "postal_code": SELLER_POSTAL_CODE
-#     })
-#     response_body = response.get_json()
-
-#     # Assert
-#     assert response.status_code == 400
-#     assert "message" in response_body
-#     assert "Seller blah invalid" in response_body["message"]
-
-# def test_delete_invalid_seller(client, one_seller):
-#     # Act
-#     response = client.delete("/sellers/blah")
-#     response_body = response.get_json()
-
-#     # Assert
-#     assert response.status_code == 400
-#     assert "message" in response_body
-#     assert "Seller blah invalid" in response_body["message"]
