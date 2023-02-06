@@ -110,6 +110,23 @@ def test_update_one_seller_nonexistent_store(client, one_seller):
     assert "message" in response_body
     assert "Seller 5 not found" in response_body["message"]
 
+def test_update_one_seller_needs_store_name(client, one_seller):
+    # Act
+    response = client.put("/sellers/Green-Acres", json={
+        "store_description": SELLER_STORE_DESCRIPTION,
+        "first_name": SELLER_FIRST_NAME,
+        "last_name": SELLER_LAST_NAME,
+        "email": SELLER_EMAIL,
+        "address_1": SELLER_ADDRESS_1,
+        "city": SELLER_CITY,
+        "region": SELLER_REGION,
+        "postal_code": SELLER_POSTAL_CODE
+    })
+    response_body = response.get_json()
+    # Assert
+    assert response.status_code == 400
+    assert response_body["message"] == f"Request body must include store_name."
+
 # DELETE
 def test_delete_one_seller(client, one_seller):
     # Act
@@ -189,7 +206,7 @@ def test_get_all_products_from_one_seller(client, one_saved_product):
 
 
 # UPDATE
-def test_update_one_product_need_jwt(client, seller_access_token, one_saved_product):
+def test_update_one_product(client, seller_access_token, one_saved_product):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
     response = client.put("/sellers/Green-Acres/products/1", headers=headers, json={
@@ -252,6 +269,20 @@ def test_update_one_nonexistent_product_fails(client, seller_access_token):
     # Assert
     assert response.status_code == 404
     assert response_body["message"] == f"Product not found"
+
+def test_update_one_product_need_product_name(client, seller_access_token, one_saved_product):
+    # Act
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.put("/sellers/Green-Acres/products/1", headers=headers, json={
+        "price": 5,
+        "quantity": 20,
+        "image_file": None,
+        "description": "Delicious sweet corn!"
+    })
+    response_body = response.get_json()
+    # Assert
+    assert response.status_code == 400
+    assert response_body["message"] == f"Request body must include name."
 
 # DELETE 
 def test_delete_one_product(client, seller_access_token, one_saved_product):
