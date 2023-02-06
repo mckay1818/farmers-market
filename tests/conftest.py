@@ -75,6 +75,10 @@ def second_seller(app):
     db.session.add(new_seller)
     db.session.commit()
 
+# @pytest.fixture
+# def one_logged_in_seller(app, one_seller):
+
+
 @pytest.fixture
 def one_saved_product(app, one_seller):
     new_product = Product(

@@ -7,9 +7,6 @@ class Seller(db.Model, UserMixin):
     store_description = db.Column(db.Text)
     products = db.relationship('Product', back_populates='seller', lazy=True)
 
-    def __repr__(self):
-        return f"Seller {self.first_name} {self.last_name}, email {self.email}"
-
     # Convenience Initializer/Seconday Constructor
     @classmethod
     def from_dict(cls, dict):
@@ -37,6 +34,7 @@ class Seller(db.Model, UserMixin):
 
     def to_dict(self):
         return {
+            "id": self.id,
             "store_name": self.store_name,
             "store_description": self.store_description,
             "first_name": self.first_name,

@@ -26,6 +26,11 @@ def test_login_seller(client, one_seller):
     assert "message" in response_body
     assert "Login successful" in response_body["message"]
 
+    identity = client.post("/who_am_i")
+    identity_response_body = identity.get_json()
+
+    assert len(identity_response_body) == 3
+
 def test_login_requires_email(client, one_seller):
     # Act
     response = client.post("/login", json={
