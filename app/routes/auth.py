@@ -3,15 +3,25 @@ from app.routes.validation_functions import validate_id_and_get_entry, validate_
 from app.models.seller import Seller
 from app.models.customer import Customer
 from app.models.usermixin import UserMixin
-from app.models.product import Product
+from app.routes.seller_routes import sellers_bp
 from flask import Blueprint, jsonify, abort, make_response, request
-from flask_jwt_extended import create_access_token, set_access_cookies, unset_access_cookies
+from flask_jwt_extended import create_access_token, set_access_cookies, unset_access_cookies, jwt_required
 
 auth_bp = Blueprint("auth", __name__)
 
+# Cb that takes whatever object is passed in as the identity when
+#  creating JWTs and converts it to a JSON serializable format.
+@jwt.user_identity_loader
+def user_identity_lookup(user):
+    return user.id
+
 # Cb that loads user from db when accessing a protected route
-# and returns an obj
-# 
+# and returns an obj (or None if lookup fails)
+# @jwt.user_lookup_loader
+# def user_lookup_cb(_jwt_header, jwt_data):
+#     username = jwt_data["sub"]
+#     if Seller.query.f
+
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
@@ -37,7 +47,7 @@ def login():
         return abort(make_response({"message": f"Incorrect password"}, 401))
 
     response = jsonify({"message": "Login successful"})
-    access_token = create_access_token(email, additional_claims=additional_claims)
+    access_token = create_access_token(identity=user)
     set_access_cookies(response, access_token)
     return response
 
@@ -47,11 +57,7 @@ def logout():
     unset_access_cookies(response)
     return response
 
-@auth_bp.route("/customer-login")
-def customer_login():
-    pass
-
-@auth_bp.route("/seller-signup")
+@sellers_bp.route("/signup")
 def seller_signup():
     pass
 

@@ -81,7 +81,7 @@ def delete_one_seller(store_name):
 ##################
 
 # CREATE
-@sellers_bp.route("/<seller_id>/products", methods=["POST"])
+@sellers_bp.route("/<store_name>/products", methods=["POST"])
 def add_product_to_seller(seller_id):
     seller = validate_id_and_get_entry(Seller, seller_id)
     request_body = request.get_json()
@@ -94,7 +94,7 @@ def add_product_to_seller(seller_id):
     return make_response(jsonify(f"Product {new_product.name} from {new_product.seller.store_name} successfully created."), 201)
 
 # READ
-@sellers_bp.route("/<seller_id>/products", methods=["GET"])
+@sellers_bp.route("/<store_name>/products", methods=["GET"])
 def get_all_products_for_one_seller(seller_id):
     seller = validate_id_and_get_entry(Seller, seller_id)
     products = Product.query.filter_by(seller_id=seller.id)
@@ -106,7 +106,7 @@ def get_all_products_for_one_seller(seller_id):
 # TODO - add route for reading 1 product by id
 
 # UPDATE
-@sellers_bp.route("/<seller_id>/products/<product_id>", methods=["PUT"])
+@sellers_bp.route("/<store_name>/products/<product_id>", methods=["PUT"])
 def update_one_product_for_one_seller(seller_id, product_id):
     seller = validate_id_and_get_entry(Seller, seller_id)
     product = validate_id_and_get_entry(Product, product_id)
@@ -126,7 +126,7 @@ def update_one_product_for_one_seller(seller_id, product_id):
     
 
 # DELETE
-@sellers_bp.route("/<seller_id>/products/<product_id>", methods=["DELETE"])
+@sellers_bp.route("/<store_name>/products/<product_id>", methods=["DELETE"])
 def delete_one_product_for_one_seller(seller_id, product_id):
     seller = validate_id_and_get_entry(Seller, seller_id)
     product = validate_id_and_get_entry(Product, product_id)

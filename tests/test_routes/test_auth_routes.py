@@ -23,7 +23,8 @@ def test_login_seller(client, one_seller):
     response_body = response.get_json()
     # Assert
     assert response.status_code == 200
-    assert response_body["access_token"]
+    assert "message" in response_body
+    assert "Login successful" in response_body["message"]
 
 def test_login_requires_email(client, one_seller):
     # Act
