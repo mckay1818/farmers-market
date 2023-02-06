@@ -15,6 +15,9 @@ def create_app(test_config=None):
     app = Flask(__name__)
     app.url_map.strict_slashes = False
     app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
+    # # TODO - set to true for prod
+    app.config["JWT_COOKIE_SECURE"] = False
+    app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies"]
 
     if not test_config:
         app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
