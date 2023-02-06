@@ -189,9 +189,10 @@ def test_get_all_products_from_one_seller(client, one_saved_product):
 
 
 # UPDATE
-def test_update_one_product(client, one_saved_product):
+def test_update_one_product(client, seller_access_token, one_saved_product):
     # Act
-    response = client.put("/sellers/Green-Acres/products/1", json={
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.put("/sellers/Green-Acres/products/1", headers=headers, json={
         "name": "Sweet Corn",
         "price": 5,
         "quantity": 20,
@@ -209,9 +210,10 @@ def test_update_one_product(client, one_saved_product):
     assert product.price == 5
 
 # DELETE 
-def test_delete_one_product(client, one_saved_product):
+def test_delete_one_product(client, seller_access_token, one_saved_product):
     # Act
-    response = client.delete("/sellers/Green-Acres/products/1")
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.delete("/sellers/Green-Acres/products/1", headers=headers)
     response_body = response.get_json()
 
     # Assert

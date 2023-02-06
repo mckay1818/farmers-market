@@ -1,9 +1,8 @@
-from app import db, jwt
-from app.routes.validation_functions import validate_id_and_get_entry, validate_request_and_create_obj
+from app import db
+from app.routes.validation_functions import validate_id_and_get_entry, validate_request_and_create_obj, validate_current_user
 from app.models.seller import Seller
 from app.models.product import Product
 from flask import Blueprint, jsonify, abort, make_response, request
-from flask_jwt_extended import jwt_manager, get_current_user, verify_jwt_in_request
 
 sellers_bp = Blueprint("sellers", __name__, url_prefix="/sellers")
 
@@ -73,15 +72,7 @@ def delete_one_seller(store_name):
 # CREATE
 @sellers_bp.route("/<store_name>/products", methods=["POST"])
 def add_product_to_seller(store_name):
-    store_name = store_name.strip().replace("-", " ")
-    verify_jwt_in_request()
-    current_user = get_current_user()
-
-    if not current_user:
-        abort(make_response({"message": f"Seller {current_user.store_name} not found"}, 404))
-    if current_user.store_name != store_name:
-        abort(make_response({"message": f"Action forbidden"}, 403))
-        
+    current_user = validate_current_user(store_name)
     request_body = request.get_json()
     request_body["seller_id"] = current_user.id
 
@@ -107,9 +98,11 @@ def get_all_products_for_one_seller(store_name):
 # UPDATE
 @sellers_bp.route("/<store_name>/products/<product_id>", methods=["PUT"])
 def update_one_product_for_one_seller(store_name, product_id):
-    store_name = store_name.strip().replace("-", " ")
-    seller = Seller.validate_by_store_name_and_get_entry(store_name)
-    product = validate_id_and_get_entry(Product, product_id)
+    current_user = validate_current_user(store_name)
+    product = Product.query.filter_by(seller=current_user, id=product_id).first()
+    if not product:
+        abort(make_response({"message": f"Product not found"}, 404))
+
     request_body = request.get_json()
     try:
         product.name = request_body["name"]
@@ -128,9 +121,11 @@ def update_one_product_for_one_seller(store_name, product_id):
 # DELETE
 @sellers_bp.route("/<store_name>/products/<product_id>", methods=["DELETE"])
 def delete_one_product_for_one_seller(store_name, product_id):
-    store_name = store_name.strip().replace("-", " ")
-    seller = Seller.validate_by_store_name_and_get_entry(store_name)
-    product = validate_id_and_get_entry(Product, product_id)
+    current_user = validate_current_user(store_name)
+    product = Product.query.filter_by(seller=current_user, id=product_id).first()
+    if not product:
+        abort(make_response({"message": f"Product not found"}, 404))
+
     db.session.delete(product)
     db.session.commit()
     return make_response(jsonify(f"Product {product.name} from {product.seller.store_name} successfully deleted."), 200)
