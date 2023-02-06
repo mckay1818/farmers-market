@@ -136,9 +136,10 @@ def test_delete_nonexistent_seller(client, one_seller):
 ##################
 
 # CREATE
-def test_create_one_product(client, one_seller):
+def test_create_one_product(client, seller_access_token):
     # Act
-    response = client.post("/sellers/Green-Acres/products", json={
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.post("/sellers/Green-Acres/products", headers=headers, json={
         "name": "Sweet Corn",
         "price": 3,
         "quantity": 20,
@@ -159,9 +160,10 @@ def test_create_one_product(client, one_seller):
     assert new_product.description == "Delicious sweet corn!"
     assert new_product.seller.store_name == "Green Acres"
 
-def test_create_one_product_must_contain_name(client, one_seller):
+def test_create_one_product_must_contain_name(client, seller_access_token):
     # Act
-    response = client.post("/sellers/Green-Acres/products", json={
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.post("/sellers/Green-Acres/products", headers=headers, json={
         "price": 3,
         "quantity": 20,
         "image_file": None,

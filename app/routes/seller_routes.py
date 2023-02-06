@@ -1,8 +1,9 @@
-from app import db
+from app import db, jwt
 from app.routes.validation_functions import validate_id_and_get_entry, validate_request_and_create_obj
 from app.models.seller import Seller
 from app.models.product import Product
 from flask import Blueprint, jsonify, abort, make_response, request
+from flask_jwt_extended import jwt_manager, get_current_user, verify_jwt_in_request
 
 sellers_bp = Blueprint("sellers", __name__, url_prefix="/sellers")
 
@@ -73,12 +74,16 @@ def delete_one_seller(store_name):
 @sellers_bp.route("/<store_name>/products", methods=["POST"])
 def add_product_to_seller(store_name):
     store_name = store_name.strip().replace("-", " ")
-    seller = Seller.validate_by_store_name_and_get_entry(store_name)
-    if not seller:
-        abort(make_response({"message": f"Seller {store_name} not found"}, 404))
-    
+    verify_jwt_in_request()
+    current_user = get_current_user()
+
+    if not current_user:
+        abort(make_response({"message": f"Seller {current_user.store_name} not found"}, 404))
+    if current_user.store_name != store_name:
+        abort(make_response({"message": f"Action forbidden"}, 403))
+        
     request_body = request.get_json()
-    request_body["seller_id"] = seller.id
+    request_body["seller_id"] = current_user.id
 
     new_product = validate_request_and_create_obj(Product, request_body)
 

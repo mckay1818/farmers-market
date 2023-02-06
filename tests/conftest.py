@@ -75,8 +75,14 @@ def second_seller(app):
     db.session.add(new_seller)
     db.session.commit()
 
-# @pytest.fixture
-# def one_logged_in_seller(app, one_seller):
+@pytest.fixture
+def seller_access_token(app, client, one_seller):
+    response = client.post("/login", json={
+        "email": SELLER_1_EMAIL,
+        "password": SELLER_1_PASSWORD,
+    })
+    access_token = response.get_json()["access_token"]
+    return access_token
 
 
 @pytest.fixture

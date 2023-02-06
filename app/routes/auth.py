@@ -49,7 +49,7 @@ def login():
     
     if not user.verify_password(password):
         return abort(make_response({"message": f"Incorrect password"}, 401))
-  
+
     response = jsonify({"message": "Login successful"})
     access_token = create_access_token(identity=user, additional_claims=additional_claims)
     set_access_cookies(response, access_token)
