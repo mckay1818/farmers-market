@@ -1,5 +1,5 @@
 from app import db
-from app.routes.validation_functions import validate_id_and_get_entry, validate_request_and_create_obj, validate_current_user
+from app.routes.validation_functions import validate_request_and_create_obj, validate_current_user
 from app.models.seller import Seller
 from app.models.product import Product
 from flask import Blueprint, jsonify, abort, make_response, request

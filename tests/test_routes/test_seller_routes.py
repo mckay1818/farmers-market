@@ -189,7 +189,7 @@ def test_get_all_products_from_one_seller(client, one_saved_product):
 
 
 # UPDATE
-def test_update_one_product(client, seller_access_token, one_saved_product):
+def test_update_one_product_need_jwt(client, seller_access_token, one_saved_product):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
     response = client.put("/sellers/Green-Acres/products/1", headers=headers, json={
@@ -209,6 +209,50 @@ def test_update_one_product(client, seller_access_token, one_saved_product):
     assert product
     assert product.price == 5
 
+def test_update_one_product_need_jwt(client, one_saved_product):
+    # Act
+    response = client.put("/sellers/Green-Acres/products/1",  json={
+        "name": "Sweet Corn",
+        "price": 5,
+        "quantity": 20,
+        "image_file": None,
+        "description": "Delicious sweet corn!"
+    })
+    response_body = response.get_json()
+    # Assert
+    assert response.status_code == 401
+    assert "Missing JWT" in response_body["msg"]
+
+def test_update_one_product_need_correct_jwt(client, seller_access_token, one_saved_product):
+    # Act
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.put("/sellers/Happy-Cows/products/1", headers=headers, json={
+        "name": "Sweet Corn",
+        "price": 5,
+        "quantity": 20,
+        "image_file": None,
+        "description": "Delicious sweet corn!"
+    })
+    response_body = response.get_json()
+    # Assert
+    assert response.status_code == 403
+
+def test_update_one_nonexistent_product_fails(client, seller_access_token):
+    # Act
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.put("/sellers/Green-Acres/products/2", headers=headers, json={
+        "name": "Sweet Corn",
+        "price": 5,
+        "quantity": 20,
+        "image_file": None,
+        "description": "Delicious sweet corn!"
+    })
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 404
+    assert response_body["message"] == f"Product not found"
+
 # DELETE 
 def test_delete_one_product(client, seller_access_token, one_saved_product):
     # Act
@@ -220,3 +264,30 @@ def test_delete_one_product(client, seller_access_token, one_saved_product):
     assert response.status_code == 200
     assert response_body == f"Product Sweet Corn from {SELLER_STORE_NAME} successfully deleted."
     assert Product.query.get(1) == None
+
+def test_delete_one_product_need_jwt(client, one_saved_product):
+    # Act
+    response = client.delete("/sellers/Green-Acres/products/1")
+    response_body = response.get_json()
+    # Assert
+    assert response.status_code == 401
+    assert "Missing JWT" in response_body["msg"]
+
+def test_delete_one_product_need_correct_jwt(client, seller_access_token, one_saved_product):
+    # Act
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.delete("/sellers/Happy-Cows/products/1", headers=headers)
+    response_body = response.get_json()
+    # Assert
+    assert response.status_code == 403
+
+
+def test_delete_one_nonexistent_product_fails(client, seller_access_token):
+    # Act
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.delete("/sellers/Green-Acres/products/2", headers=headers)
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 404
+    assert response_body["message"] == f"Product not found"

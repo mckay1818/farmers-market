@@ -9,7 +9,3 @@ class Order(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     customer = db.relationship('Customer', back_populates='orders')
     products = db.relationship('Product', secondary='order_product', back_populates='orders')
-
-
-    def __repr__(self):
-        return f"Order #{self.id} made by Customer {self.customer}"

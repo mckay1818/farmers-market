@@ -1,5 +1,5 @@
 from app import db, jwt
-from app.routes.validation_functions import validate_id_and_get_entry, validate_request_and_create_obj
+from app.routes.validation_functions import validate_request_and_create_obj
 from app.models.seller import Seller
 from app.models.customer import Customer
 from app.models.usermixin import UserMixin
