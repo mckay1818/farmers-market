@@ -4,6 +4,7 @@ from app.models.seller import Seller
 from app.models.customer import Customer
 from app.models.usermixin import UserMixin
 from app.routes.seller_routes import sellers_bp
+from app.routes.customer_routes import customers_bp
 from flask import Blueprint, jsonify, abort, make_response, request
 from flask_jwt_extended import create_access_token, set_access_cookies, unset_access_cookies, jwt_required, current_user, get_jwt
 
@@ -81,6 +82,12 @@ def seller_signup():
 
     return make_response(jsonify(f"Seller {new_seller.first_name} {new_seller.last_name}, owner of {new_seller.store_name} successfully created."), 201)
 
-@auth_bp.route("/customer-signup")
+@customers_bp.route("/signup", methods=["POST"])
 def customer_signup():
-    pass
+    request_body = request.get_json()
+    new_customer = validate_request_and_create_obj(Customer, request_body)
+
+    db.session.add(new_customer)
+    db.session.commit()
+
+    return make_response(jsonify(f"Customer {new_customer.username} successfully created."), 201)

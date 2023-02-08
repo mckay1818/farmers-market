@@ -67,9 +67,10 @@ def test_get_one_seller_nonexistent_store_name(client, one_seller):
     assert "Seller Fake Store not found" in response_body["message"]
 
 # UPDATE
-def test_update_one_seller(client, one_seller):
+def test_update_one_seller(client, seller_access_token):
     # Act
-    response = client.put("/sellers/Green-Acres", json={
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.put("/sellers/Green-Acres", headers=headers, json={
         "store_name": "A New Store Name",
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,
@@ -90,9 +91,10 @@ def test_update_one_seller(client, one_seller):
     assert new_seller
     assert new_seller.store_name == "A New Store Name"
 
-def test_update_one_seller_nonexistent_store(client, one_seller):
+def test_update_one_seller_fails_if_unauthorized(client, seller_access_token):
     # Act
-    response = client.put("/sellers/5", json={
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.put("/sellers/5", headers=headers, json={
         "store_name": "A New Store Name",
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,
@@ -106,13 +108,14 @@ def test_update_one_seller_nonexistent_store(client, one_seller):
     response_body = response.get_json()
 
     # Assert
-    assert response.status_code == 404
+    assert response.status_code == 403
     assert "message" in response_body
-    assert "Seller 5 not found" in response_body["message"]
+    assert "Action forbidden" in response_body["message"]
 
-def test_update_one_seller_needs_store_name(client, one_seller):
+def test_update_one_seller_needs_store_name(client, seller_access_token):
     # Act
-    response = client.put("/sellers/Green-Acres", json={
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.put("/sellers/Green-Acres", headers=headers, json={
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,
         "last_name": SELLER_LAST_NAME,
@@ -128,9 +131,10 @@ def test_update_one_seller_needs_store_name(client, one_seller):
     assert response_body["message"] == f"Request body must include store_name."
 
 # DELETE
-def test_delete_one_seller(client, one_seller):
+def test_delete_one_seller(client, seller_access_token):
     # Act
-    response = client.delete("/sellers/Green-Acres")
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.delete("/sellers/Green-Acres", headers=headers)
     response_body = response.get_json()
 
     # Assert
@@ -138,15 +142,16 @@ def test_delete_one_seller(client, one_seller):
     assert response_body == f"Seller {SELLER_FIRST_NAME} {SELLER_LAST_NAME}, owner of {SELLER_STORE_NAME} successfully deleted."
     assert Seller.query.get(1) == None
 
-def test_delete_nonexistent_seller(client, one_seller):
+def test_delete_fails_if_unauthorized(client, seller_access_token):
     # Act
-    response = client.delete("/sellers/5")
+    headers = {"Authorization": f"Bearer {seller_access_token}"}
+    response = client.delete("/sellers/5", headers=headers)
     response_body = response.get_json()
 
     # Assert
-    assert response.status_code == 404
+    assert response.status_code == 403
     assert "message" in response_body
-    assert "Seller 5 not found" in response_body["message"]
+    assert "Action forbidden" in response_body["message"]
 
 ##################
 # NESTED PRODUCT ROUTES #

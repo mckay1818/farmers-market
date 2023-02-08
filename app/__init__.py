@@ -39,10 +39,14 @@ def create_app(test_config=None):
 
     # import and register blueprints
     from .routes.seller_routes import sellers_bp
+    from .routes.customer_routes import customers_bp
     from .routes.auth import auth_bp
     app.register_blueprint(sellers_bp)
+    app.register_blueprint(customers_bp)
     app.register_blueprint(auth_bp)
 
     jwt.init_app(app)
-    CORS(app)
+    # supports_credentials: injects Access-Control-Allow-Credentials into response headers
+    # in prod, would add origins=frontend-host-base-url to restrict CORS
+    CORS(app, supports_credentials=True)
     return app

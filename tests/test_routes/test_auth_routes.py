@@ -1,5 +1,6 @@
 from app.models.seller import Seller
 from app.models.product import Product
+from app.models.customer import Customer
 
 SELLER_ID = 1
 SELLER_STORE_NAME = "Green Acres"
@@ -12,6 +13,17 @@ SELLER_ADDRESS_1 = "278 Armstrong Rd"
 SELLER_CITY = "Hudson"
 SELLER_REGION = "New York"
 SELLER_POSTAL_CODE = 12534
+
+CUSTOMER_ID = 1
+CUSTOMER_USERNAME = "grocerygetter11"
+CUSTOMER_FIRST_NAME = "Lux"
+CUSTOMER_LAST_NAME = "Sanders"
+CUSTOMER_EMAIL = "luxsanders@fakemail.com"
+CUSTOMER_PASSWORD = "secretword"
+CUSTOMER_ADDRESS_1 = "443 Cherry Lane"
+CUSTOMER_CITY = "Hudson"
+CUSTOMER_REGION = "New York"
+CUSTOMER_POSTAL_CODE = 12534
 
 # LOGIN
 def test_login_seller(client, one_seller):
@@ -64,7 +76,7 @@ def test_login_incorrect_password(client, one_seller):
     assert "Incorrect password" in response_body["message"]
 
 # CREATE ONE SELLER
-def test_create_one_seller(client):
+def test_signup_one_seller(client):
     # Act
     response = client.post("/sellers/signup", json={
         "store_name": SELLER_STORE_NAME,
@@ -88,7 +100,7 @@ def test_create_one_seller(client):
     assert new_seller
     assert new_seller.store_name == SELLER_STORE_NAME
 
-def test_create_seller_must_contain_store_name(client):
+def test_seller_signup_must_contain_store_name(client):
     # Act
     response = client.post("/sellers/signup", json={
         "store_description": SELLER_STORE_DESCRIPTION,
@@ -108,3 +120,48 @@ def test_create_seller_must_contain_store_name(client):
     assert "message" in response_body
     assert "Request body must include store_name" in response_body["message"]
     assert Seller.query.all() == []
+
+
+# CREATE ONE CUSTOMER
+def test_signup_one_customer(client):
+    # Act
+    response = client.post("/customers/signup", json={
+        "username": CUSTOMER_USERNAME,
+        "first_name": CUSTOMER_FIRST_NAME,
+        "last_name": CUSTOMER_LAST_NAME,
+        "email": CUSTOMER_EMAIL,
+        "password": CUSTOMER_PASSWORD,
+        "address_1": CUSTOMER_ADDRESS_1,
+        "city": CUSTOMER_CITY,
+        "region": CUSTOMER_REGION,
+        "postal_code": CUSTOMER_POSTAL_CODE
+    })
+    response_body = response.get_json()
+    # Assert
+    assert response.status_code == 201
+    assert response_body == f"Customer {CUSTOMER_USERNAME} successfully created."
+
+    new_customer = Customer.query.get(1)
+
+    assert new_customer
+    assert new_customer.username == CUSTOMER_USERNAME
+
+def test_customer_signup_must_contain_username(client):
+    # Act
+    response = client.post("/customers/signup", json={
+        "first_name": SELLER_FIRST_NAME,
+        "last_name": SELLER_LAST_NAME,
+        "email": SELLER_EMAIL,
+        "password": SELLER_PASSWORD,
+        "address_1": SELLER_ADDRESS_1,
+        "city": SELLER_CITY,
+        "region": SELLER_REGION,
+        "postal_code": SELLER_POSTAL_CODE
+    })
+    response_body = response.get_json()
+    
+    # Assert
+    assert response.status_code == 400
+    assert "message" in response_body
+    assert "Request body must include username" in response_body["message"]
+    assert Customer.query.all() == []
