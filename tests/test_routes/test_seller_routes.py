@@ -86,10 +86,10 @@ def test_update_one_seller(client, seller_access_token):
     assert response.status_code == 200
     assert response_body == f"Seller {SELLER_FIRST_NAME} {SELLER_LAST_NAME}, owner of A New Store Name successfully updated."
 
-    new_seller = Seller.query.get(1)
+    updated_seller = Seller.query.get(1)
 
-    assert new_seller
-    assert new_seller.store_name == "A New Store Name"
+    assert updated_seller
+    assert updated_seller.store_name == "A New Store Name"
 
 def test_update_one_seller_fails_if_unauthorized(client, seller_access_token):
     # Act
@@ -112,23 +112,23 @@ def test_update_one_seller_fails_if_unauthorized(client, seller_access_token):
     assert "message" in response_body
     assert "Action forbidden" in response_body["message"]
 
-def test_update_one_seller_needs_store_name(client, seller_access_token):
+def test_update_one_seller_needs_all_fields(client, seller_access_token):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
     response = client.put("/sellers/Green-Acres", headers=headers, json={
+        "store_name": SELLER_STORE_NAME,
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,
         "last_name": SELLER_LAST_NAME,
         "email": SELLER_EMAIL,
         "address_1": SELLER_ADDRESS_1,
         "city": SELLER_CITY,
-        "region": SELLER_REGION,
         "postal_code": SELLER_POSTAL_CODE
     })
     response_body = response.get_json()
     # Assert
     assert response.status_code == 400
-    assert response_body["message"] == f"Request body must include store_name."
+    assert response_body["message"] == f"Request body must include region."
 
 # DELETE
 def test_delete_one_seller(client, seller_access_token):
