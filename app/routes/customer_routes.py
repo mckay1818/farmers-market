@@ -1,5 +1,5 @@
 from app import db
-from app.routes.validation_functions import validate_request_and_create_obj, validate_current_customer
+from app.routes.validation_functions import validate_request_and_create_obj, validate_current_user
 from app.models.seller import Seller
 from app.models.customer import Customer
 from app.models.product import Product
@@ -23,7 +23,7 @@ def get_one_seller_by_id(username):
 # UPDATE
 @customers_bp.route("/<username>", methods=["PUT"])
 def update_one_customer(username):
-    current_user = validate_current_customer(username)
+    current_user = validate_current_user(username)
     request_body = request.get_json()
     try:
         current_user.username = request_body["username"]

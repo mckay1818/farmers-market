@@ -26,14 +26,17 @@ def validate_current_seller(store_name):
     return current_user
         
 
-def validate_current_customer(username):
+def validate_current_user(username):
     username = username.strip().replace("-", " ")
     verify_jwt_in_request()
     current_user = get_current_user()
 
     if not current_user:
         abort(make_response({"message": f"Customer {current_user.username} not found"}, 404))
-    if current_user.username != username:
-        abort(make_response({"message": f"Action forbidden"}, 403))
+    elif current_user.__tablename__ == "customer":
+        if current_user.username != username:
+            abort(make_response({"message": f"Action forbidden"}, 403))
+    elif current_user.store_name != username:
+            abort(make_response({"message": f"Action forbidden"}, 403))
 
     return current_user

@@ -1,5 +1,5 @@
 from app import db
-from app.routes.validation_functions import validate_request_and_create_obj, validate_current_seller
+from app.routes.validation_functions import validate_request_and_create_obj, validate_current_user
 from app.models.seller import Seller
 from app.models.product import Product
 from flask import Blueprint, jsonify, abort, make_response, request
@@ -30,7 +30,7 @@ def get_one_seller_by_id(store_name):
 # UPDATE
 @sellers_bp.route("/<store_name>", methods=["PUT"])
 def update_one_seller(store_name):
-    current_user = validate_current_seller(store_name)
+    current_user = validate_current_user(store_name)
     request_body = request.get_json()
 
     try:
@@ -53,7 +53,7 @@ def update_one_seller(store_name):
 # DELETE
 @sellers_bp.route("/<store_name>", methods=["DELETE"])
 def delete_one_seller(store_name):
-    current_user = validate_current_seller(store_name)
+    current_user = validate_current_user(store_name)
 
     db.session.delete(current_user)
     db.session.commit()
@@ -67,7 +67,7 @@ def delete_one_seller(store_name):
 # CREATE
 @sellers_bp.route("/<store_name>/products", methods=["POST"])
 def add_product_to_seller(store_name):
-    current_user = validate_current_seller(store_name)
+    current_user = validate_current_user(store_name)
     request_body = request.get_json()
     request_body["seller_id"] = current_user.id
 
@@ -93,7 +93,7 @@ def get_all_products_for_one_seller(store_name):
 # UPDATE
 @sellers_bp.route("/<store_name>/products/<product_id>", methods=["PUT"])
 def update_one_product_for_one_seller(store_name, product_id):
-    current_user = validate_current_seller(store_name)
+    current_user = validate_current_user(store_name)
     product = Product.query.filter_by(seller=current_user, id=product_id).first()
     if not product:
         abort(make_response({"message": f"Product not found"}, 404))
@@ -116,7 +116,7 @@ def update_one_product_for_one_seller(store_name, product_id):
 # DELETE
 @sellers_bp.route("/<store_name>/products/<product_id>", methods=["DELETE"])
 def delete_one_product_for_one_seller(store_name, product_id):
-    current_user = validate_current_seller(store_name)
+    current_user = validate_current_user(store_name)
     product = Product.query.filter_by(seller=current_user, id=product_id).first()
     if not product:
         abort(make_response({"message": f"Product not found"}, 404))
