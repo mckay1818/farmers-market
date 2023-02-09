@@ -1,5 +1,6 @@
 from app.models.customer import Customer
 from app.models.product import Product
+from app.models.cart import Cart
 
 CUSTOMER_ID = 1
 CUSTOMER_USERNAME = "grocerygetter11"
@@ -144,15 +145,15 @@ def test_add_one_product_to_cart(client, one_saved_product, customer_access_toke
     # Assert
     assert response.status_code == 200
     assert response_body["product_id"] == 1
-    assert response_body["order_id"] == 1
+    assert response_body["cart_id"] == 1
     assert response_body["available_inventory"] == 19
 
     product = Product.query.get(1)
     assert product.quantity == 19
 
-    order = Customer.query.get(1).order
-    assert order
-    assert len(order.products) == 1
+    cart = Customer.query.get(1).cart
+    assert cart
+    assert len(cart.products) == 1
 
 def test_add_product_to_cart_fails_if_unauthorized(client, one_saved_product, customer_access_token):
     # Act
@@ -181,9 +182,9 @@ def test_remove_one_product_from_cart(client, one_saved_cart_item, customer_acce
     product = Product.query.get(1)
     assert product.quantity == 20
 
-    order = Customer.query.get(1).order
-    assert order
-    assert len(order.products) == 0
+    cart = Customer.query.get(1).cart
+    assert cart
+    assert len(cart.products) == 0
 
 def test_delete_product_from_cart_fails_if_unauthorized(client, one_saved_product, customer_access_token):
     # Act

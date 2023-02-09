@@ -5,5 +5,5 @@ class Order(db.Model):
     order_date = db.Column(db.DateTime)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'), nullable=False)
-    customer = db.relationship('Customer', back_populates='order')
+    customer = db.relationship('Customer', back_populates='orders')
     cart = db.relationship('Cart', back_populates='order')

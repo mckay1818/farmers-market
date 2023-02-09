@@ -1,9 +1,9 @@
 from app import db
 from app.routes.validation_functions import validate_request_and_create_obj, validate_current_user, validate_model_by_id
-from app.models.seller import Seller
 from app.models.customer import Customer
 from app.models.product import Product
 from app.models.order import Order
+from app.models.cart import Cart
 from app.models.cart_product import CartProduct
 from flask import Blueprint, jsonify, abort, make_response, request
 
@@ -67,8 +67,8 @@ def get_user_cart(username):
 @customers_bp.route("/<username>/cart/<int:product_id>", methods=["POST"])
 def add_product_to_cart(username, product_id):
     current_user = validate_current_user(username)
-    if not current_user.order:
-        current_user.order = Order()
+    if not current_user.cart:
+        current_user.cart = Cart()
     product = validate_model_by_id(Product, product_id)
     product.update_inventory()
 
@@ -76,14 +76,14 @@ def add_product_to_cart(username, product_id):
             return make_response({"message": "Item is out of stock"}), 400
 
     added_item = CartProduct(
-        order_id=current_user.order.id,
+        cart_id=current_user.cart.id,
         product_id=product.id
     )
     db.session.add(added_item)
     db.session.commit()
     # TODO - decide on appropriate response body
     return {
-        "order_id": added_item.order_id,
+        "cart_id": added_item.cart_id,
         "product_id": added_item.product_id,
         "available_inventory": product.quantity
         }, 200
@@ -94,7 +94,7 @@ def remove_product_from_cart(username, product_id):
     current_user = validate_current_user(username)
     product = validate_model_by_id(Product, product_id)
     cart_item = CartProduct.query.filter_by(
-        order_id=current_user.order.id,
+        cart_id=current_user.cart.id,
         product_id=product.id
     ).first()
 
