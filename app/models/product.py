@@ -1,6 +1,4 @@
 from app import db
-from sqlalchemy.orm import relationship
-from app.models.order_product import OrderProduct
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -11,7 +9,7 @@ class Product(db.Model):
     description = db.Column(db.Text)
     seller_id = db.Column(db.Integer, db.ForeignKey('seller.id'), nullable=False)
     seller = db.relationship('Seller', back_populates='products')
-    orders = db.relationship('OrderProduct', back_populates='product')
+    carts = db.relationship('CartProduct', back_populates='product')
 
     # Convenience Initializer/Seconday Constructor
     @classmethod

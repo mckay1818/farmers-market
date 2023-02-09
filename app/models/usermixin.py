@@ -1,5 +1,4 @@
 from app import db
-from sqlalchemy.ext.declarative import declared_attr
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class UserMixin(object):

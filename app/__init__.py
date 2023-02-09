@@ -30,8 +30,9 @@ def create_app(test_config=None):
     from app.models.seller import Seller
     from app.models.customer import Customer
     from app.models.product import Product
+    from app.models.cart import Cart
     from app.models.order import Order
-    from app.models.order_product import OrderProduct
+    from app.models.cart_product import CartProduct
 
     # setup db
     db.init_app(app)

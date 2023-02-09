@@ -1,5 +1,4 @@
 from app import db
-from sqlalchemy.orm import relationship
 from .usermixin import UserMixin
 
 class Seller(db.Model, UserMixin):

@@ -154,6 +154,19 @@ def test_add_one_product_to_cart(client, one_saved_product, customer_access_toke
     assert order
     assert len(order.products) == 1
 
+def test_add_product_to_cart_fails_if_unauthorized(client, one_saved_product, customer_access_token):
+    # Act
+    headers = {"Authorization": f"Bearer {customer_access_token}"}
+    response = client.delete("/customers/notme/cart/1", headers=headers)
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 403
+    assert "message" in response_body
+    assert "Action forbidden" in response_body["message"]
+
+
+
 def test_remove_one_product_from_cart(client, one_saved_cart_item, customer_access_token):
     # Act
     headers = {"Authorization": f"Bearer {customer_access_token}"}
@@ -171,3 +184,14 @@ def test_remove_one_product_from_cart(client, one_saved_cart_item, customer_acce
     order = Customer.query.get(1).order
     assert order
     assert len(order.products) == 0
+
+def test_delete_product_from_cart_fails_if_unauthorized(client, one_saved_product, customer_access_token):
+    # Act
+    headers = {"Authorization": f"Bearer {customer_access_token}"}
+    response = client.delete("/customers/notme/cart/1", headers=headers)
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 403
+    assert "message" in response_body
+    assert "Action forbidden" in response_body["message"]
