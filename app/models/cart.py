@@ -5,7 +5,7 @@ from datetime import datetime
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     customer = db.relationship('Customer', back_populates='cart')
     # 1-1 relationship
     order = db.relationship('Order', back_populates='cart', uselist=False)

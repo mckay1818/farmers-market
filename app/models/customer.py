@@ -1,5 +1,6 @@
 from app import db
 from .usermixin import UserMixin
+from app.models.cart import Cart
 
 class Customer(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -51,3 +52,7 @@ class Customer(db.Model, UserMixin):
         for item in items:
             items_list.append(item)
         return items_list
+
+    # def clear_cart(self):
+    #     next_id = self.cart.id + 1
+    #     self.cart = Cart(id=next_id, customer_id=self.id)

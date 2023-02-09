@@ -108,3 +108,14 @@ def remove_product_from_cart(username, product_id):
     return make_response(jsonify({"message": f"Product {product.name} successfully removed from {current_user.username}'s cart."}), 200)
 
 # CHECKOUT
+@customers_bp.route("/<username>/cart/checkout", methods=["POST"])
+def checkout(username):
+    current_user = validate_current_user(username)
+    cart = current_user.cart
+    if not cart:
+        abort(make_response({"message": f"Cart is empty"}, 404))
+    cart.place_order()
+    current_user.cart = Cart(customer_id=current_user.id)
+    db.session.commit()
+
+    return make_response(jsonify({"message": f"Order placed for {current_user.username}."}), 202)
