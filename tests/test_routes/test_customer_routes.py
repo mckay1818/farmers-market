@@ -1,6 +1,7 @@
 from app.models.customer import Customer
 from app.models.product import Product
 from app.models.cart import Cart
+from app.models.order import Order
 
 CUSTOMER_ID = 1
 CUSTOMER_USERNAME = "grocerygetter11"
@@ -190,6 +191,43 @@ def test_delete_product_from_cart_fails_if_unauthorized(client, one_saved_produc
     # Act
     headers = {"Authorization": f"Bearer {customer_access_token}"}
     response = client.delete("/customers/notme/cart/1", headers=headers)
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 403
+    assert "message" in response_body
+    assert "Action forbidden" in response_body["message"]
+
+def test_checkout_creates_new_order(client, one_saved_cart_item, customer_access_token):
+    # Act
+    headers = {"Authorization": f"Bearer {customer_access_token}"}
+    response = client.post("/customers/grocerygetter11/cart/checkout", headers=headers)
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 202 # status = accepted
+
+    order = Order.query.get(1)
+    assert order
+    assert order.cart_id == 1
+    assert order.customer_id == 1
+
+def test_checkout_empties_cart(client, one_saved_cart_item, customer_access_token):
+        # Act
+    headers = {"Authorization": f"Bearer {customer_access_token}"}
+    response = client.post("/customers/grocerygetter11/cart/checkout", headers=headers)
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 202 # status = accepted
+
+    cart = Customer.query.get(1).cart
+    assert cart == []
+
+def test_checkout_fails_if_unauthorized(client, one_saved_cart_item, customer_access_token):
+    # Act
+    headers = {"Authorization": f"Bearer {customer_access_token}"}
+    response = client.post("/customers/notme/cart/checkout", headers=headers)
     response_body = response.get_json()
 
     # Assert
