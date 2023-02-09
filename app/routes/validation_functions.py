@@ -13,18 +13,23 @@ def validate_request_and_create_obj(cls, request_body):
         abort(make_response(jsonify({"message": f"Request body must include {key}."}), 400))
     return new_obj
 
-def validate_current_seller(store_name):
-    store_name = store_name.strip().replace("-", " ")
-    verify_jwt_in_request()
-    current_user = get_current_user()
 
-    if not current_user:
-        abort(make_response({"message": f"Seller {current_user.store_name} not found"}, 404))
-    if current_user.store_name != store_name:
-        abort(make_response({"message": f"Action forbidden"}, 403))
+def validate_model_by_id(cls, model_id):
+    
+    try:
+        model_id = int(model_id)
+    except:
+        # handling invalid id type
+        abort(make_response({"message":f"{cls.__name__} {model_id} was invalid"}, 400))
 
-    return current_user
-        
+    # return obj data if id in db
+    model = cls.query.get(model_id)
+
+    # handle nonexistent id
+    if not model:
+        abort(make_response({"message":f"{cls.__name__} {model_id} was not found"}, 404))
+    return model
+
 
 def validate_current_user(username):
     username = username.strip().replace("-", " ")

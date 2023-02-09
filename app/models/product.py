@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.orm import relationship
+from app.models.order_product import OrderProduct
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -10,7 +11,7 @@ class Product(db.Model):
     description = db.Column(db.Text)
     seller_id = db.Column(db.Integer, db.ForeignKey('seller.id'), nullable=False)
     seller = db.relationship('Seller', back_populates='products')
-    orders = db.relationship('Order', secondary='order_product', back_populates='products')
+    orders = db.relationship('OrderProduct', back_populates='product')
 
     # Convenience Initializer/Seconday Constructor
     @classmethod
@@ -33,3 +34,7 @@ class Product(db.Model):
             "image_file": self.image_file,
             "description": self.description,
         }
+
+    def update_inventory(self):
+        self.quantity -= 1
+        # TODO - add deletion of item if out of stock

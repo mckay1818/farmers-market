@@ -1,11 +1,14 @@
 from app import db
 from sqlalchemy.orm import relationship
 from .usermixin import UserMixin
+from app.models.product import Product
+from app.models.order import Order
 
 class Customer(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
     credits = db.Column(db.Integer, default=5000)
-    orders = db.relationship('Order', back_populates='customer', lazy=True)
+    # 1-1 relationship
+    order = db.relationship('Order', back_populates='customer', uselist=False)
 
     # Convenience Initializer/Seconday Constructor
     @classmethod
@@ -30,7 +33,6 @@ class Customer(db.Model, UserMixin):
             return None
         return obj
 
-
     def to_dict(self):
         return {
             # TODO - REMOVE ID?
@@ -44,3 +46,13 @@ class Customer(db.Model, UserMixin):
             "region": self.region,
             "postal_code": self.postal_code
         }
+
+    # def get_order_items(self):
+    #     items = self.order.products_association
+
+        # items = Product.query.join(Order).filter_by(
+        #     Order.id==self.order.id).all()
+        # jsonified_items = []
+        # for item in items:
+        #     jsonified_items.append(item.to_dict())
+        # return jsonified_items
