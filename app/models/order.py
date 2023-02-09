@@ -8,7 +8,7 @@ class Order(db.Model):
     order_date = db.Column(db.DateTime)
     is_shipped = db.Column(db.Boolean, default=False)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
-    customer = db.relationship('Customer', back_populates='orders')
+    customer = db.relationship('Customer', back_populates='order')
     products_association = db.relationship('OrderProduct', back_populates='order')
     products = association_proxy("products_association", "product")
 

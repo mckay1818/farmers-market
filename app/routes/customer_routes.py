@@ -3,6 +3,7 @@ from app.routes.validation_functions import validate_request_and_create_obj, val
 from app.models.seller import Seller
 from app.models.customer import Customer
 from app.models.product import Product
+from app.models.order import Order
 from app.models.order_product import OrderProduct
 from flask import Blueprint, jsonify, abort, make_response, request
 
@@ -56,7 +57,9 @@ def get_user_cart(username):
 # CREATE - ADD TO CART
 @customers_bp.route("/<username>/cart/<int:product_id>", methods=["POST"])
 def add_product_to_cart(username, product_id):
-    current_user = validate_current_user(product_id)
+    current_user = validate_current_user(username)
+    if not current_user.order:
+        current_user.order = Order()
     product = validate_model_by_id(Product, product_id)
     product.update_inventory()
 
@@ -75,3 +78,24 @@ def add_product_to_cart(username, product_id):
         "product_id": added_item.product_id,
         "available_inventory": product.quantity
         }, 200
+
+# DELETE - REMOVE FROM CART
+@customers_bp.route("/<username>/cart/<int:product_id>", methods=["DELETE"])
+def remove_product_from_cart(username, product_id):
+    current_user = validate_current_user(username)
+    product = validate_model_by_id(Product, product_id)
+    cart_item = OrderProduct.query.filter_by(
+        order_id=current_user.order.id,
+        product_id=product.id
+    ).first()
+
+    if cart_item:
+        db.session.delete(cart_item)
+    else:
+        abort(make_response({"message": f"Cart item not found"}, 404))
+    
+    product.quantity += 1
+    db.session.commit()
+    return make_response(jsonify({"message": f"Product {product.name} successfully removed from {current_user.username}'s cart."}), 200)
+
+# CHECKOUT

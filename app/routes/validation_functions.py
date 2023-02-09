@@ -15,7 +15,6 @@ def validate_request_and_create_obj(cls, request_body):
 
 
 def validate_model_by_id(cls, model_id):
-    
     try:
         model_id = int(model_id)
     except:

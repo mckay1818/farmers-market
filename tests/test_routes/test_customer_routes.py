@@ -1,4 +1,5 @@
 from app.models.customer import Customer
+from app.models.product import Product
 
 CUSTOMER_ID = 1
 CUSTOMER_USERNAME = "grocerygetter11"
@@ -12,7 +13,7 @@ CUSTOMER_REGION = "New York"
 CUSTOMER_POSTAL_CODE = 12534
 
 ##################
-# SELLER ROUTES #
+# CUSTOMER ROUTES #
 ##################
 
 # READ
@@ -128,3 +129,45 @@ def test_delete_customer_fails_if_unauthorized(client, customer_access_token):
     assert response.status_code == 403
     assert "message" in response_body
     assert "Action forbidden" in response_body["message"]
+
+
+##################
+# CART ROUTES #
+##################
+
+def test_add_one_product_to_cart(client, one_saved_product, customer_access_token):
+    # Act
+    headers = {"Authorization": f"Bearer {customer_access_token}"}
+    response = client.post("/customers/grocerygetter11/cart/1", headers=headers)
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 200
+    assert response_body["product_id"] == 1
+    assert response_body["order_id"] == 1
+    assert response_body["available_inventory"] == 19
+
+    product = Product.query.get(1)
+    assert product.quantity == 19
+
+    order = Customer.query.get(1).order
+    assert order
+    assert len(order.products) == 1
+
+def test_remove_one_product_from_cart(client, one_saved_cart_item, customer_access_token):
+    # Act
+    headers = {"Authorization": f"Bearer {customer_access_token}"}
+    response = client.delete("/customers/grocerygetter11/cart/1", headers=headers)
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 200
+    assert "message" in response_body
+    assert "Product Sweet Corn successfully removed from grocerygetter11's cart." in response_body["message"]
+
+    product = Product.query.get(1)
+    assert product.quantity == 20
+
+    order = Customer.query.get(1).order
+    assert order
+    assert len(order.products) == 0

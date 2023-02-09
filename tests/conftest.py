@@ -6,6 +6,8 @@ from app import db
 from app.models.seller import Seller
 from app.models.product import Product
 from app.models.customer import Customer
+from app.models.order import Order
+from app.models.order_product import OrderProduct
 from flask.signals import request_finished
 
 SELLER_1_STORE_NAME = "Green Acres"
@@ -133,3 +135,8 @@ def customer_access_token(app, client, one_customer):
     })
     access_token = response.get_json()["access_token"]
     return access_token
+
+@pytest.fixture
+def one_saved_cart_item(app, client, one_saved_product, customer_access_token):
+    headers = {"Authorization": f"Bearer {customer_access_token}"}
+    response = client.post("/customers/grocerygetter11/cart/1", headers=headers)
