@@ -43,6 +43,15 @@ def update_one_customer(username):
     db.session.commit()
     return make_response(jsonify(f"Customer {username} successfully updated."), 200)
 
+# DELETE
+@customers_bp.route("/<username>", methods=["DELETE"])
+def delete_one_customer(username):
+    current_user = validate_current_user(username)
+
+    db.session.delete(current_user)
+    db.session.commit()
+    return make_response(jsonify(f"Customer {current_user.username} successfully deleted."), 200)
+
 
 ##################
 # ORDER ROUTES #
