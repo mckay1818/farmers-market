@@ -12,6 +12,12 @@ class Cart(db.Model):
     products_association = db.relationship('CartProduct', back_populates='cart')
     products = association_proxy("products_association", "product")
 
+    def calculate_total(self):
+        total = 0
+        for product in self.products:
+            total += product.price
+        return total
+    
     def place_order(self):
         order = Order(
             order_date=datetime.now(),

@@ -222,7 +222,7 @@ def test_checkout_empties_cart(client, one_saved_cart_item, customer_access_toke
     assert response.status_code == 202 # status = accepted
 
     cart = Customer.query.get(1).cart
-    assert cart == []
+    assert cart.products == []
 
 def test_checkout_fails_if_unauthorized(client, one_saved_cart_item, customer_access_token):
     # Act

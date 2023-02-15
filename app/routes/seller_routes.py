@@ -21,7 +21,8 @@ def get_all_sellers():
 
 @sellers_bp.route("/<store_name>", methods=["GET"])
 def get_one_seller_by_id(store_name):
-    store_name = store_name.strip().replace("-", " ")
+    #### TODO %20 POTENTIALLY NEED TO REPLACE %20 WITH %20 TO ENCODE FOR URL SPACE
+    store_name = store_name.strip().replace("%20", " ")
     seller = Seller.validate_by_store_name_and_get_entry(store_name)
     if not seller:
         abort(make_response({"message": f"Seller {store_name} not found"}, 404))
@@ -80,7 +81,7 @@ def add_product_to_seller(store_name):
 # READ
 @sellers_bp.route("/<store_name>/products", methods=["GET"])
 def get_all_products_for_one_seller(store_name):
-    store_name = store_name.strip().replace("-", " ")
+    store_name = store_name.strip().replace("%20", " ")
     seller = Seller.validate_by_store_name_and_get_entry(store_name)
     products = Product.query.filter_by(seller_id=seller.id)
     products_response = []
@@ -88,7 +89,7 @@ def get_all_products_for_one_seller(store_name):
         products_response.append(product.to_dict())
     return jsonify(products_response)
 
-# TODO - add route for reading 1 product by id
+# TODO %20 add route for reading 1 product by id
 
 # UPDATE
 @sellers_bp.route("/<store_name>/products/<product_id>", methods=["PUT"])

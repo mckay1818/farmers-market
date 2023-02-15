@@ -114,6 +114,9 @@ def checkout(username):
     cart = current_user.cart
     if not cart:
         abort(make_response({"message": f"Cart is empty"}, 404))
+    # TODO - replace dummy token system with Stripe integration
+    cart_total = cart.calculate_total()
+    current_user.credits -= cart_total
     cart.place_order()
     current_user.cart = Cart(customer_id=current_user.id)
     db.session.commit()
