@@ -10,7 +10,7 @@ class UserMixin(object):
     address_1 = db.Column(db.String(80), nullable=False)
     city = db.Column(db.String(80), nullable=False)
     region = db.Column(db.String(80), nullable=False)
-    postal_code = db.Column(db.Integer, nullable=False)
+    postal_code = db.Column(db.String(5), nullable=False)
 
     @property
     def password(self):
