@@ -12,6 +12,12 @@ class Cart(db.Model):
     products_association = db.relationship('CartProduct', back_populates='cart')
     products = association_proxy("products_association", "product")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "customer_id": self.customer_id,
+        }
+
     def calculate_total(self):
         total = 0
         for product in self.products:

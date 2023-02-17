@@ -5,7 +5,7 @@ class Product(db.Model):
     name = db.Column(db.String(20), nullable=False)
     price = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    image_file = db.Column(db.String(20), default='default.jpg')
+    image_file = db.Column(db.String(20), default='default.jpg', nullable=True)
     description = db.Column(db.Text)
     seller_id = db.Column(db.Integer, db.ForeignKey('seller.id'), nullable=False)
     seller = db.relationship('Seller', back_populates='products')
@@ -18,7 +18,7 @@ class Product(db.Model):
         name=dict["name"],
         price=dict["price"],
         quantity=dict["quantity"],
-        image_file=dict["image_file"],
+        # image_file=dict["image_file"],
         description=dict["description"],
         seller_id=dict["seller_id"]
         )

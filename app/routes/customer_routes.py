@@ -67,25 +67,31 @@ def get_user_cart(username):
 @customers_bp.route("/<username>/cart/<int:product_id>", methods=["POST"])
 def add_product_to_cart(username, product_id):
     current_user = validate_current_user(username)
-    if not current_user.cart:
-        current_user.cart = Cart()
     product = validate_model_by_id(Product, product_id)
     product.update_inventory()
 
     if product.quantity < 0:
             return make_response({"message": "Item is out of stock"}), 400
 
-    added_item = CartProduct(
-        cart_id=current_user.cart.id,
-        product_id=product.id
-    )
-    db.session.add(added_item)
+    # check if item is in cart & increase quantity accordingly
+    cart_product = CartProduct.query.filter_by(cart_id=current_user.cart.id, product_id=product.id).first()
+    print(cart_product)
+    if cart_product:
+        cart_product.quantity += 1
+    else:
+        cart_product = CartProduct(
+            cart_id=current_user.cart.id,
+            product_id=product.id,
+            quantity=1
+        )
+    db.session.add(cart_product)
     db.session.commit()
     # TODO - decide on appropriate response body
     return {
-        "cart_id": added_item.cart_id,
-        "product_id": added_item.product_id,
-        "available_inventory": product.quantity
+        "cart_id": cart_product.cart_id,
+        "product_id": cart_product.product_id,
+        "available_inventory": product.quantity,
+        "price": product.price
         }, 200
 
 # DELETE - REMOVE FROM CART

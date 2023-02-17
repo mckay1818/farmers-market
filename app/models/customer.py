@@ -1,6 +1,8 @@
 from app import db
 from .usermixin import UserMixin
 from app.models.cart import Cart
+from app.models.product import Product
+from app.models.cart_product import CartProduct
 
 class Customer(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -21,7 +23,8 @@ class Customer(db.Model, UserMixin):
         address_1=dict["address_1"],
         city=dict["city"],
         region=dict["region"],
-        postal_code=dict["postal_code"]
+        postal_code=dict["postal_code"],
+        cart=Cart()
         )
         return new_customer
 
@@ -47,10 +50,19 @@ class Customer(db.Model, UserMixin):
         }
 
     def get_cart_items(self):
-        items = self.order.products_association
+        items = Product.query.join(CartProduct).filter_by(cart_id=self.cart.id).all()
         items_list = []
+        if not self.cart.products:
+            return items_list
         for item in items:
-            items_list.append(item)
+            subtotal = item.quantity * item.price
+            items_list.append({
+                "name": item.name,
+                "price": item.price,
+                "quantity": item.quantity,
+                "subtotal": subtotal
+            })
+
         return items_list
 
     # def clear_cart(self):
