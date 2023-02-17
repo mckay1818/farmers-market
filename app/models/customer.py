@@ -6,7 +6,6 @@ from app.models.cart_product import CartProduct
 
 class Customer(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
-    credits = db.Column(db.Integer, default=5000)
     # 1-1 relationship
     cart = db.relationship('Cart', back_populates='customer', uselist=False)
     orders = db.relationship('Order', back_populates='customer')
