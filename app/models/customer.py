@@ -55,12 +55,10 @@ class Customer(db.Model, UserMixin):
         if not self.cart.products:
             return items_list
         for item in items:
-            subtotal = item.quantity * item.price
             items_list.append({
                 "name": item.name,
                 "price": item.price,
                 "quantity": item.quantity,
-                "subtotal": subtotal
             })
 
         return items_list
