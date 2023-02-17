@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+import stripe
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -18,6 +19,9 @@ def create_app(test_config=None):
     # # TODO - set to true for prod
     app.config["JWT_COOKIE_SECURE"] = False
     app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies"]
+    app.config["STRIPE_PUBLIC_KEY"] = os.environ.get("STRIPE_PUBLIC_KEY")
+    app.config["STRIPE_SECRET_KEY"] = os.environ.get("STRIPE_SECRET_KEY")
+
 
     if not test_config:
         app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
