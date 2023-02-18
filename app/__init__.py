@@ -55,5 +55,3 @@ def create_app(test_config=None):
     # in prod, would add origins=frontend-host-base-url to restrict CORS
     CORS(app, supports_credentials=True)
     return app
-
-
