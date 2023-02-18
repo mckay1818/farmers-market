@@ -144,8 +144,8 @@ def checkout(username):
         checkout_session = stripe.checkout.Session.create(
             line_items=line_items,
             mode="payment",
-            success_url=f"http://127.0.0.1:3000/order/success",
-            cancel_url=f"http://127.0.0.1:3000/order/cancel",
+            success_url= os.environ.get("FRONTEND_URL") + "/order/success",
+            cancel_url= os.environ.get("FRONTEND_URL") +  "/order/cancel",
         )
         return checkout_session.url
 
