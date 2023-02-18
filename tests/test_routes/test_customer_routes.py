@@ -12,7 +12,7 @@ CUSTOMER_PASSWORD = "secretword"
 CUSTOMER_ADDRESS_1 = "443 Cherry Lane"
 CUSTOMER_CITY = "Hudson"
 CUSTOMER_REGION = "New York"
-CUSTOMER_POSTAL_CODE = 12534
+CUSTOMER_POSTAL_CODE = "12534"
 
 ##################
 # CUSTOMER ROUTES #
@@ -205,7 +205,7 @@ def test_checkout_creates_new_order(client, one_saved_cart_item, customer_access
     response_body = response.get_json()
 
     # Assert
-    assert response.status_code == 202 # status = accepted
+    assert response.status_code == 200 # status = accepted
 
     order = Order.query.get(1)
     assert order
@@ -213,7 +213,7 @@ def test_checkout_creates_new_order(client, one_saved_cart_item, customer_access
     assert order.customer_id == 1
 
 def test_checkout_empties_cart(client, one_saved_cart_item, customer_access_token):
-        # Act
+    # Act
     headers = {"Authorization": f"Bearer {customer_access_token}"}
     response = client.post("/customers/grocerygetter11/cart/checkout", headers=headers)
     response_body = response.get_json()

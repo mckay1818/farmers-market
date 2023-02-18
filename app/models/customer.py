@@ -49,11 +49,14 @@ class Customer(db.Model, UserMixin):
         }
 
     def get_cart_items(self):
-        items = Product.query.join(CartProduct).filter_by(cart_id=self.cart.id).all()
+        items = Product.query.join(CartProduct).add_columns(
+            Product.name, Product.price, CartProduct.quantity
+            ).filter_by(cart_id=self.cart.id).all()
         items_list = []
         if not self.cart.products:
             return items_list
         for item in items:
+            print(item)
             items_list.append({
                 "name": item.name,
                 "price": item.price,
