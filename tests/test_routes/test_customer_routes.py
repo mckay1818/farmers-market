@@ -198,10 +198,10 @@ def test_delete_product_from_cart_fails_if_unauthorized(client, one_saved_produc
     assert "message" in response_body
     assert "Action forbidden" in response_body["message"]
 
-def test_checkout_creates_new_order(client, one_saved_cart_item, customer_access_token):
+def test_checkout_success_creates_new_order(client, one_saved_cart_item, customer_access_token):
     # Act
     headers = {"Authorization": f"Bearer {customer_access_token}"}
-    response = client.post("/customers/grocerygetter11/cart/checkout", headers=headers)
+    response = client.post("/customers/grocerygetter11/order/success", headers=headers)
     response_body = response.get_json()
 
     # Assert
@@ -212,14 +212,14 @@ def test_checkout_creates_new_order(client, one_saved_cart_item, customer_access
     assert order.cart_id == 1
     assert order.customer_id == 1
 
-def test_checkout_empties_cart(client, one_saved_cart_item, customer_access_token):
+def test_checkout_success_empties_cart(client, one_saved_cart_item, customer_access_token):
     # Act
     headers = {"Authorization": f"Bearer {customer_access_token}"}
-    response = client.post("/customers/grocerygetter11/cart/checkout", headers=headers)
+    response = client.post("/customers/grocerygetter11/order/success", headers=headers)
     response_body = response.get_json()
 
     # Assert
-    assert response.status_code == 202 # status = accepted
+    assert response.status_code == 200
 
     cart = Customer.query.get(1).cart
     assert cart.products == []

@@ -145,7 +145,7 @@ def checkout(username):
             line_items=line_items,
             mode="payment",
             success_url=f"http://127.0.0.1:3000/order/success",
-            cancel_url=f"http://127.0.0.1:3000/customers/order/cancel",
+            cancel_url=f"http://127.0.0.1:3000/order/cancel",
         )
         return checkout_session.url
 
@@ -163,4 +163,4 @@ def confirm_checkout(username):
     cart.place_order()
     current_user.cart = Cart(customer_id=current_user.id)
     db.session.commit()
-    return checkout_session.url
+    return make_response(jsonify({"message": "Checkout complete."}), 200)

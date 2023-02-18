@@ -1,5 +1,6 @@
 from app.models.seller import Seller
 from app.models.product import Product
+import pytest
 
 SELLER_ID = 1
 SELLER_STORE_NAME = "Green Acres"
@@ -11,7 +12,7 @@ SELLER_PASSWORD = "password"
 SELLER_ADDRESS_1 = "278 Armstrong Rd"
 SELLER_CITY = "Hudson"
 SELLER_REGION = "New York"
-SELLER_POSTAL_CODE = 12534
+SELLER_POSTAL_CODE = "12534"
 
 ##################
 # SELLER ROUTES #
@@ -38,7 +39,7 @@ def test_get_sellers(client, one_seller):
 
 def test_get_one_seller_by_store_name(client, one_seller):
     # Act
-    response = client.get("/sellers/Green-Acres")
+    response = client.get("/sellers/Green%20Acres")
     response_body = response.get_json()
 
     # Assert
@@ -58,7 +59,7 @@ def test_get_one_seller_by_store_name(client, one_seller):
 
 def test_get_one_seller_nonexistent_store_name(client, one_seller):
     # Act
-    response = client.get("/sellers/Fake-Store")
+    response = client.get("/sellers/Fake%20Store")
     response_body = response.get_json()
 
     # Assert
@@ -70,7 +71,7 @@ def test_get_one_seller_nonexistent_store_name(client, one_seller):
 def test_update_one_seller(client, seller_access_token):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
-    response = client.put("/sellers/Green-Acres", headers=headers, json={
+    response = client.put("/sellers/Green%20Acres", headers=headers, json={
         "store_name": "A New Store Name",
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,
@@ -115,7 +116,7 @@ def test_update_one_seller_fails_if_unauthorized(client, seller_access_token):
 def test_update_one_seller_needs_all_fields(client, seller_access_token):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
-    response = client.put("/sellers/Green-Acres", headers=headers, json={
+    response = client.put("/sellers/Green%20Acres", headers=headers, json={
         "store_name": SELLER_STORE_NAME,
         "store_description": SELLER_STORE_DESCRIPTION,
         "first_name": SELLER_FIRST_NAME,
@@ -134,7 +135,7 @@ def test_update_one_seller_needs_all_fields(client, seller_access_token):
 def test_delete_one_seller(client, seller_access_token):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
-    response = client.delete("/sellers/Green-Acres", headers=headers)
+    response = client.delete("/sellers/Green%20Acres", headers=headers)
     response_body = response.get_json()
 
     # Assert
@@ -161,7 +162,7 @@ def test_delete_fails_if_unauthorized(client, seller_access_token):
 def test_create_one_product(client, seller_access_token):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
-    response = client.post("/sellers/Green-Acres/products", headers=headers, json={
+    response = client.post("/sellers/Green%20Acres/products", headers=headers, json={
         "name": "Sweet Corn",
         "price": 3,
         "quantity": 20,
@@ -202,7 +203,7 @@ def test_create_one_product_must_contain_name(client, seller_access_token):
 # READ
 def test_get_all_products_from_one_seller(client, one_saved_product):
     # Act
-    response = client.get("/sellers/Green-Acres/products")
+    response = client.get("/sellers/Green%20Acres/products")
     response_body = response.get_json()
 
     # Assert
@@ -214,7 +215,7 @@ def test_get_all_products_from_one_seller(client, one_saved_product):
 def test_update_one_product(client, seller_access_token, one_saved_product):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
-    response = client.put("/sellers/Green-Acres/products/1", headers=headers, json={
+    response = client.put("/sellers/Green%20Acres/products/1", headers=headers, json={
         "name": "Sweet Corn",
         "price": 5,
         "quantity": 20,
@@ -233,7 +234,7 @@ def test_update_one_product(client, seller_access_token, one_saved_product):
 
 def test_update_one_product_need_jwt(client, one_saved_product):
     # Act
-    response = client.put("/sellers/Green-Acres/products/1",  json={
+    response = client.put("/sellers/Green%20Acres/products/1",  json={
         "name": "Sweet Corn",
         "price": 5,
         "quantity": 20,
@@ -248,7 +249,7 @@ def test_update_one_product_need_jwt(client, one_saved_product):
 def test_update_one_product_need_correct_jwt(client, seller_access_token, one_saved_product):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
-    response = client.put("/sellers/Happy-Cows/products/1", headers=headers, json={
+    response = client.put("/sellers/Happy%20Cows/products/1", headers=headers, json={
         "name": "Sweet Corn",
         "price": 5,
         "quantity": 20,
@@ -262,7 +263,7 @@ def test_update_one_product_need_correct_jwt(client, seller_access_token, one_sa
 def test_update_one_nonexistent_product_fails(client, seller_access_token):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
-    response = client.put("/sellers/Green-Acres/products/2", headers=headers, json={
+    response = client.put("/sellers/Green%20Acres/products/2", headers=headers, json={
         "name": "Sweet Corn",
         "price": 5,
         "quantity": 20,
@@ -278,7 +279,7 @@ def test_update_one_nonexistent_product_fails(client, seller_access_token):
 def test_update_one_product_need_product_name(client, seller_access_token, one_saved_product):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
-    response = client.put("/sellers/Green-Acres/products/1", headers=headers, json={
+    response = client.put("/sellers/Green%20Acres/products/1", headers=headers, json={
         "price": 5,
         "quantity": 20,
         "image_file": None,
@@ -293,7 +294,7 @@ def test_update_one_product_need_product_name(client, seller_access_token, one_s
 def test_delete_one_product(client, seller_access_token, one_saved_product):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
-    response = client.delete("/sellers/Green-Acres/products/1", headers=headers)
+    response = client.delete("/sellers/Green%20Acres/products/1", headers=headers)
     response_body = response.get_json()
 
     # Assert
@@ -303,7 +304,7 @@ def test_delete_one_product(client, seller_access_token, one_saved_product):
 
 def test_delete_one_product_need_jwt(client, one_saved_product):
     # Act
-    response = client.delete("/sellers/Green-Acres/products/1")
+    response = client.delete("/sellers/Green%20Acres/products/1")
     response_body = response.get_json()
     # Assert
     assert response.status_code == 401
@@ -312,7 +313,7 @@ def test_delete_one_product_need_jwt(client, one_saved_product):
 def test_delete_one_product_need_correct_jwt(client, seller_access_token, one_saved_product):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
-    response = client.delete("/sellers/Happy-Cows/products/1", headers=headers)
+    response = client.delete("/sellers/Happy%20Cows/products/1", headers=headers)
     response_body = response.get_json()
     # Assert
     assert response.status_code == 403
@@ -321,7 +322,7 @@ def test_delete_one_product_need_correct_jwt(client, seller_access_token, one_sa
 def test_delete_one_nonexistent_product_fails(client, seller_access_token):
     # Act
     headers = {"Authorization": f"Bearer {seller_access_token}"}
-    response = client.delete("/sellers/Green-Acres/products/2", headers=headers)
+    response = client.delete("/sellers/Green%20Acres/products/2", headers=headers)
     response_body = response.get_json()
 
     # Assert
