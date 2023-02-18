@@ -7,7 +7,7 @@ from app.routes.seller_routes import sellers_bp
 from app.routes.customer_routes import customers_bp
 from flask import Blueprint, jsonify, abort, make_response, request
 from flask_jwt_extended import create_access_token, set_access_cookies, unset_access_cookies, jwt_required, current_user
-from datetime import datetime
+from datetime import timedelta
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -53,7 +53,7 @@ def login():
         return abort(make_response({"message": f"Incorrect password"}, 401))
 
     response = jsonify({"message": "Login successful"})
-    access_token = create_access_token(identity=user, additional_claims=additional_claims, expires_delta=datetime.timedelta(minutes=30))
+    access_token = create_access_token(identity=user, additional_claims=additional_claims, expires_delta=timedelta(minutes=30))
     set_access_cookies(response, access_token)
     return jsonify(access_token=access_token)
 
