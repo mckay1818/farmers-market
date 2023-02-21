@@ -144,8 +144,8 @@ def checkout(username):
         checkout_session = stripe.checkout.Session.create(
             line_items=line_items,
             mode="payment",
-            success_url= os.environ.get("FRONTEND_URL") + f"/customers/{current_user.username}/order/success",
-            cancel_url= os.environ.get("FRONTEND_URL") +  f"/customers/{current_user.username}/order/cancel",
+            success_url= os.environ.get("FRONTEND_URL") + f"/customers/{username}/order/success",
+            cancel_url= os.environ.get("FRONTEND_URL") +  f"/customers/{username}/order/cancel",
         )
         return checkout_session.url
 
@@ -155,7 +155,7 @@ def checkout(username):
 # CONFIRM CHECKOUT
 @customers_bp.route("/<username>/order/success", methods=["POST"])
 def confirm_checkout(username):
-    current_user = validate_current_user(username)
+    current_user = Customer.validate_by_username_and_get_entry(username)
     cart = current_user.cart
     if cart == []:
         abort(make_response({"message": f"Cart is empty"}, 404))
