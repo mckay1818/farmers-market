@@ -1,8 +1,10 @@
-# Farmer's Market - Frontend
+# Farmer's Market - Backend
 
 An e-commerce website that allows farmers to sell directly to consumers in an open online marketplace.
 
 This website allows users to create an account as a Seller or a Customer. All registered users are able to access the marketplace of Sellers on login. Sellers can build out their store by adding products, and Customers can add these products to their cart and checkout with Stripe. 
+
+This project backend consists of a Flask REST API connected to a PostgreSQL database via a SQLAlchemy connection.
 
 <img width="600" alt="Farmer's Market landing page" src="https://user-images.githubusercontent.com/72710253/219997390-e9afb831-19b2-415f-a28f-e01dc0918730.png">
 <img width="600" alt="Customer's View of a Seller page" src="https://user-images.githubusercontent.com/72710253/219997521-fbe40a0b-a95f-486b-b6af-9f187a3d0b82.png">
@@ -17,15 +19,14 @@ This website allows users to create an account as a Seller or a Customer. All re
 * PostgreSQL: database
 * SQLAlchemy: object-relational mapper (ORM)
 * Stripe API: customer checkout
-* Heroku: deployment [(view deployed frontend)](https://farmers-market-fe.herokuapp.com/)
+* Heroku: deployment [(view deployed project)](https://farmers-market-fe.herokuapp.com/)
 * Docker: containerization
 * AWS: ECS, RDS, S3 (in-progress)
 
-## Frontend Features
+## Backend Features
 
 * Integration with Stripe API for customer checkout
-* MPA feel using React Router
-* Conditionally rendered UI based on authenticated user roles; preservation of authentication on page refresh by [hooking a token-grabbing Effect into User Context](https://github.com/mckay1818/farmers-market-frontend/blob/main/src/contexts/UserContext.jsx) (not the most secure option, but a quick workaround for holding onto JWTs!)
+* Authentication system built with JWT's and custom-made role-based permissions.
 
 ## View Deployed Project
 
